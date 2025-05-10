@@ -1,0 +1,32 @@
+using Gtk 4.0;
+using Adw 1;
+
+menu main-menu {}
+template $Window: Adw.ApplicationWindow {
+  title: _("To-Do");
+  width-request: 360;
+  height-request: 200;
+
+  Adw.Breakpoint {
+    condition ("max-width: 500sp")
+
+    setters {
+      split_view.collapsed: true;
+    }
+  }
+
+  content: Adw.ToolbarView {
+    [top]
+    Box {
+      
+    }
+
+    content: Adw.NavigationSplitView split_view {
+      min-sidebar-width: 200;
+
+      sidebar: Adw.NavigationPage {};
+
+      content: Adw.NavigationPage task_page {};
+    };
+  };
+}

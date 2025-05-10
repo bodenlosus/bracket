@@ -15,7 +15,7 @@ class GEdit(Adw.Application):
 
     def do_activate(self):
 
-        GLib.set_application_name("GEdit")
+        Gio.glib
         resource = Gio.resource_load("resources")
         Gio.resources_register(resource)
         window = Window(self)

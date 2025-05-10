@@ -3,11 +3,11 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "gedit"
+name = "zennote"
 version = "0.1"
 dependencies = ["pygobject3", "pycairo", "pygobject-stubs"]
 
 [tool.setuptools]
-packages = ["gedit"]
+packages = ["zennote"]
 [project.scripts]
-gedit = "gedit.app:app"
+zennote = "zennote.zennote:app"
