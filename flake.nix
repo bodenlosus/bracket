@@ -4,35 +4,44 @@
 
   outputs = { self, nixpkgs, flake-utils, ... }:
     flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" ] (system:
-      with nixpkgs.legacyPackages.${system};
       let
+        pkgs = import nixpkgs { system = "x86_64-linux"; };
         pyproject = builtins.fromTOML (builtins.readFile ./pyproject.toml);
+        python-bin = pkgs.python313;
+        nativePkgs = with pkgs; [ gobject-introspection ];
+        nativePythonPkgs = with python-bin.pkgs; [ setuptools tree-sitter ];
+        treeSitterGrammars = with python-bin.pkgs.tree-sitter-grammars; [ tree-sitter-markdown ];
+        propagatedPkgs = with pkgs; [
+          gtk4
+          libadwaita
+          libpanel
+          pkg-config
+        ];
+        devPkgs = with pkgs; [
+          libxml2
+          blueprint-compiler
+          pkg-config
+          meson
+          ninja
+        ];
+        propagatedPythonPkgs = with python-bin.pkgs; [ pygobject3 pygobject-stubs pycairo ];
 
-        pkg = python3.pkgs.buildPythonPackage rec {
+        pkg = python-bin.pkgs.buildPythonPackage {
           pname = pyproject.project.name;
           version = pyproject.project.version;
           format = "pyproject";
           src = ./.;
 
-          nativeBuildInputs = with pkgs;
-            [ gobject-introspection ] ++ (with python3.pkgs; [ setuptools tree-sitter]);
+          nativeBuildInputs = nativePkgs ++ nativePythonPkgs ++ treeSitterGrammars;
 
-          propagatedBuildInputs = with pkgs;
-            [
-              gobject-introspection
-              gtk4
-              libadwaita
-              libpanel
-              pkg-config
+          propagatedBuildInputs = propagatedPkgs ++ propagatedPythonPkgs;
 
-            ] ++ (with python3.pkgs; [ pygobject3 pygobject-stubs pycairo ]);
-
-          installCheckInputs = with python3.pkgs; [ ];
+          installCheckInputs = with python-bin.pkgs; [ ];
         };
 
         editablePkg = pkg.overrideAttrs (oldAttrs: {
           nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [
-            (python3.pkgs.mkPythonEditablePackage {
+            (python-bin.pkgs.mkPythonEditablePackage {
               pname = pyproject.project.name;
               inherit (pyproject.project) scripts version;
               root = "$PWD";
@@ -40,13 +49,12 @@
           ];
         });
 
-      in {
+      in
+      {
         packages.default = pkg;
         devShells.default = pkgs.mkShell {
           venvDir = "./.venv";
-          packages = with pkgs;
-            [ gobject-introspection pkg-config gtk4 libadwaita libpanel]
-            ++ (with python3.pkgs; [ pygobject3 pygobject-stubs pycairo tree-sitter]);
+          packages = nativePkgs ++ nativePythonPkgs ++ propagatedPkgs ++ propagatedPythonPkgs ++ devPkgs;
           inputsFrom = [ editablePkg ];
         };
       });

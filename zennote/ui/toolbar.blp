@@ -1,0 +1,35 @@
+using Gtk 4.0;
+
+template $EditorToolBar: PopoverMenuBar {
+  menu-model: editor_toolbar_menu;
+}
+
+menu editor_toolbar_menu {
+  submenu {
+    label: _("File");
+
+    item {
+      label: _("New File");
+    }
+
+    item {
+      label: _("Open File");
+    }
+
+    item {
+      label: _("Save File");
+    }
+  }
+
+  submenu {
+    label: _("Edit");
+
+    item {
+      label: _("Undo");
+    }
+
+    item {
+      label: _("Redo");
+    }
+  }
+}
