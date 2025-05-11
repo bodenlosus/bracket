@@ -25,12 +25,16 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
         </property>
         <property name="content">
           <object class="AdwNavigationPage" id="task_page">
+            <property name="margin-start">5</property>
             <child>
               <object class="AdwToolbarView">
                 <child type="top">
-                  <object class="EditorTabBar"></object>
+                  <object class="EditorToolBar"></object>
                 </child>
                 <property name="reveal-top-bars">true</property>
+                <property name="content">
+                  <object class="Editor"></object>
+                </property>
               </object>
             </child>
           </object>

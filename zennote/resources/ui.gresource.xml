@@ -2,6 +2,8 @@
 <gresources>
   <gresource prefix="/ui">
     <file compressed="true" preprocess="xml-stripblanks">window.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks">tab_bar.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">tabview.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">toolbar.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">editor.ui</file>
   </gresource>
 </gresources>
