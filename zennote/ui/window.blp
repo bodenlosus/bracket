@@ -14,19 +14,20 @@ template $Window: Adw.ApplicationWindow {
       split_view.collapsed: true;
     }
   }
-
-  content: Adw.ToolbarView {
-    [top]
-    Box {
-      
-    }
-
-    content: Adw.NavigationSplitView split_view {
+  content: Adw.NavigationSplitView split_view {
       min-sidebar-width: 200;
 
       sidebar: Adw.NavigationPage {};
 
-      content: Adw.NavigationPage task_page {};
-    };
+      content: Adw.NavigationPage task_page {
+        Adw.ToolbarView {
+          [top]
+          $EditorTabBar {
+            
+          }
+          reveal-top-bars: true;
+
+        }
+      };
   };
 }

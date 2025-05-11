@@ -11,7 +11,7 @@ from gi.repository import Gio
 def load_resources():
     """Load resources for the ZenNote application."""
     
-    resource_path = pathlib.Path(__file__).parent.absolute() / "resources" / "resources.gresource"
+    resource_path = pathlib.Path(__file__).parent.absolute() / "resources" / "ui.gresource"
     
     if not resource_path.exists():
         raise FileNotFoundError(f"Resource file not found: {resource_path}") 
