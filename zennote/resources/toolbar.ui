@@ -20,6 +20,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
       </item>
       <item>
         <attribute name="label" translatable="yes">Save File</attribute>
+        <attribute name="action">win.save-current</attribute>
       </item>
     </submenu>
     <submenu>

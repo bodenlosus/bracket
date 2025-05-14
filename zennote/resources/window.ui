@@ -29,11 +29,11 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
             <child>
               <object class="AdwToolbarView">
                 <child type="top">
-                  <object class="EditorToolBar"></object>
+                  <object class="EditorToolBar" id="editor-toolbar"></object>
                 </child>
                 <property name="reveal-top-bars">true</property>
                 <property name="content">
-                  <object class="Editor"></object>
+                  <object class="EditorTabView" id="editor-tabview"></object>
                 </property>
               </object>
             </child>

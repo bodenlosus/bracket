@@ -26,11 +26,11 @@ template $Window: Adw.ApplicationWindow {
 
       Adw.ToolbarView {
         [top]
-        $EditorToolBar {}
+        $EditorToolBar editor-toolbar {}
 
         reveal-top-bars: true;
 
-        content: $Editor {};
+        content: $EditorTabView editor-tabview {};
       }
     };
   };

@@ -6,5 +6,9 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
 -->
 <interface>
   <requires lib="gtk" version="4.0"/>
-  <template class="Editor" parent="GtkTextView"></template>
+  <template class="Editor" parent="GtkTextView">
+    <property name="buffer">
+      <object class="GtkTextBuffer" id="editor-text-buffer"></object>
+    </property>
+  </template>
 </interface>

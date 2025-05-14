@@ -1,10 +1,18 @@
-
 using Gtk 4.0;
 using Adw 1;
 
-template $EditorTabView: Adw.ToolbarView {
-  [top]
-  Adw.TabBar tab-bar {}
+template $EditorTabView: Adw.Bin {
+  Adw.ToolbarView {
+    [top]
+    Adw.TabBar tab-bar {
+      autohide: false;
+      expand-tabs: false;
+      [internal-child]
+      Gtk.Label {
+        ellipsize: end;
+      }
+    }
 
-  content: Adw.TabView tab-view {};
+    content: Adw.TabView tab-view {};
+  }
 }
