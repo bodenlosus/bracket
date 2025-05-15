@@ -18,25 +18,41 @@ from gi.repository import Gtk, GLib, Adw, Panel, Gio, GObject
 # kann nicht von Adw.ToolbarView verbt werden maaaan
 class EditorTabView(Adw.Bin):
     __gtype_name__ = "EditorTabView"
-    tab_bar: Adw.TabBar = Gtk.Template.Child("tab-bar")
-    tab_view: Adw.TabView = Gtk.Template.Child("tab-view")
+    bar: Adw.TabBar = Gtk.Template.Child("tab-bar")
+    view: Adw.TabView = Gtk.Template.Child("tab-view")
 
     opened_files: dict[pathlib.Path, tuple[Adw.TabPage, Editor]] = {}
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # Connect the tab view to the tab bar
-        self.tab_bar.set_view(self.tab_view)
+        self.bar.set_view(self.view)
         self.open_file(path="/home/johannes/text.md")
 
     def open_file(self, path: str):
 
         editor = Editor()
         editor.open_file(path)
-        page = self.tab_view.append(editor)
+        page = self.view.append(editor)
 
         name = pathlib.Path(path).name
         page.set_title(name)
+
+    def get_active_editor(self) -> Union[Editor, None]:
+        page = self.view.get_selected_page()
+
+        if not page:
+            return None
+
+        return cast(Editor, page.get_child())
+
+    def new_file(self):
+        editor = Editor()
+
+        page = self.view.prepend(editor)
+        page.set_title("Untitled")
+
+        self.view.set_selected_page(page)
 
 
 @Gtk.Template(resource_path="/ui/editor.ui")
@@ -59,8 +75,9 @@ class Editor(Gtk.TextView):
         with self.path.open("r") as file:
             self.buffer.set_text(file.read())
 
-    def write_to_file(self):
+    def write_to_file(self, window: Gtk.Window):
         if not self.path:
+            self.open_save_dialogue(window)
             return
 
         self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -70,6 +87,11 @@ class Editor(Gtk.TextView):
             start, end = self.buffer.get_bounds()
             text = self.buffer.get_text(start, end, include_hidden_chars=True)
             file.write(text)
+
+    def open_save_dialogue(self, window: Gtk.Window):
+
+        d = Gtk.FileChooserDialog()
+        d.show()
 
 
 @Gtk.Template(resource_path="/ui/toolbar.ui")
@@ -95,15 +117,21 @@ class Window(Adw.ApplicationWindow):
 
         self.add_action(save)
 
-    def on_file_save(self, *args, **kwargs):
-        page = self.tabview.tab_view.get_selected_page()
+        new_file = Gio.SimpleAction(name="new-file")
+        new_file.connect("activate", self.on_file_new)
 
-        if not page:
+        self.add_action(new_file)
+
+    def on_file_save(self, *args, **kwargs):
+        editor = self.tabview.get_active_editor()
+
+        if not editor:
             return
 
-        child: Editor = cast(Editor, page.get_child())
+        editor.write_to_file(self)
 
-        child.write_to_file()
+    def on_file_new(self, *args, **kwargs):
+        self.tabview.new_file()
 
 
 class ZenNote(Adw.Application):

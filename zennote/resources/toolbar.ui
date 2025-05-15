@@ -14,6 +14,7 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
       <attribute name="label" translatable="yes">File</attribute>
       <item>
         <attribute name="label" translatable="yes">New File</attribute>
+        <attribute name="action">win.new-file</attribute>
       </item>
       <item>
         <attribute name="label" translatable="yes">Open File</attribute>

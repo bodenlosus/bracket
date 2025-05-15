@@ -10,13 +10,9 @@
         python-bin = pkgs.python313;
         nativePkgs = with pkgs; [ gobject-introspection ];
         nativePythonPkgs = with python-bin.pkgs; [ setuptools tree-sitter ];
-        treeSitterGrammars = with python-bin.pkgs.tree-sitter-grammars; [ tree-sitter-markdown ];
-        propagatedPkgs = with pkgs; [
-          gtk4
-          libadwaita
-          libpanel
-          pkg-config
-        ];
+        treeSitterGrammars = with python-bin.pkgs.tree-sitter-grammars;
+          [ tree-sitter-markdown ];
+        propagatedPkgs = with pkgs; [ gtk4 libadwaita libpanel pkg-config ];
         devPkgs = with pkgs; [
           libxml2
           blueprint-compiler
@@ -24,7 +20,11 @@
           meson
           ninja
         ];
-        propagatedPythonPkgs = with python-bin.pkgs; [ pygobject3 pygobject-stubs pycairo ];
+        propagatedPythonPkgs = with python-bin.pkgs; [
+          pygobject3
+          pygobject-stubs
+          pycairo
+        ];
 
         pkg = python-bin.pkgs.buildPythonPackage {
           pname = pyproject.project.name;
@@ -32,7 +32,8 @@
           format = "pyproject";
           src = ./.;
 
-          nativeBuildInputs = nativePkgs ++ nativePythonPkgs ++ treeSitterGrammars;
+          nativeBuildInputs = nativePkgs ++ nativePythonPkgs
+            ++ treeSitterGrammars ++ [pkgs.wrapGAppsHook];
 
           propagatedBuildInputs = propagatedPkgs ++ propagatedPythonPkgs;
 
@@ -49,12 +50,12 @@
           ];
         });
 
-      in
-      {
+      in {
         packages.default = pkg;
         devShells.default = pkgs.mkShell {
           venvDir = "./.venv";
-          packages = nativePkgs ++ nativePythonPkgs ++ propagatedPkgs ++ propagatedPythonPkgs ++ devPkgs;
+          packages = nativePkgs ++ nativePythonPkgs ++ propagatedPkgs
+            ++ propagatedPythonPkgs ++ devPkgs;
           inputsFrom = [ editablePkg ];
         };
       });
