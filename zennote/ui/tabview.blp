@@ -7,12 +7,13 @@ template $EditorTabView: Adw.Bin {
     Adw.TabBar tab-bar {
       autohide: false;
       expand-tabs: false;
-      [internal-child]
-      Gtk.Label {
-        ellipsize: end;
+      Gtk.GestureClick {
+        button: 3;
+        pressed => $_on_context();
       }
     }
-
-    content: Adw.TabView tab-view {};
+    content: Adw.TabView tab-view {
+      close-page => $_on_close();
+    };
   }
 }

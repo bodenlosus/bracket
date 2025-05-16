@@ -1,19 +1,18 @@
 import json
 import pathlib
 import re
-from enum import Enum
-from types import MappingProxyType
-from typing import Literal, get_args
+from typing import Any, Literal, get_args
 
 WindowActions = Literal[
         "new-file",
         "save-file",
         "save-file-as",
         "open-file",
+        "close-file",
 ]
 
-ACTIONS = {
-    "win": WindowActions 
+ACTIONS: dict[str, Any] = {
+    "win": WindowActions
 }
 
 type KeyMap = dict[str, str]
@@ -27,8 +26,6 @@ def parse_accels_json(config_string: str) -> KeyMap:
     if not isinstance(raw, dict):
         return dict()
 
-    raw: dict
-    
     # some sort of type black magic...
     allowed_actions: dict[str, set[str]] = {
         scope: {v for v in get_args(actions)}
@@ -68,6 +65,6 @@ def load_accels_json() -> KeyMap:
     if not path.is_file():
         print("file not found")
         return dict()
-    
+
     with path.open("r") as f:
         return parse_accels_json(f.read())

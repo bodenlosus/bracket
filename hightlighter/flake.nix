@@ -1,0 +1,53 @@
+{
+  description = "A Nix-flake-based Rust development environment";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    flake-utils.url = "github:numtide/flake-utils";
+  };
+
+  outputs = { self, nixpkgs, rust-overlay, flake-utils }:
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [ rust-overlay.overlays.default ];
+        };
+        python = pkgs.python313;
+
+        rustToolchain = pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
+      in
+      {
+        # packages.default = pkgs.callPackage ./. {};
+        devShells.default = pkgs.mkShell {
+          packages = (with pkgs; [
+            pkg-config
+            rustToolchain
+            openssl
+            pkg-config
+            cargo-deny
+            cargo-edit
+            cargo-watch
+            rust-analyzer
+            gtk4-layer-shell
+            clang
+            rustPlatform.bindgenHook
+            llvmPackages.libclang
+        ]) ++ ( with python.pkgs; [
+          setuptools-rust
+          pip
+          wheel
+          maturin
+        ]);
+          env = {
+            LIBCLANG_PATH="${pkgs.llvmPackages.libclang.lib}";
+            # BINDGEN_EXTRA_CLANG_ARGS = "-isystem ${pkgs.llvmPackages.libclang.lib}/lib/clang/${pkgs.lib.getVersion pkgs.clang}/include";
+            RUST_SRC_PATH = "${rustToolchain}/lib/rustlib/src/rust/library";
+          };
+        };
+      });
+}

@@ -11,7 +11,7 @@
         nativePkgs = with pkgs; [ gobject-introspection ];
         nativePythonPkgs = with python-bin.pkgs; [ setuptools tree-sitter ];
         treeSitterGrammars = with python-bin.pkgs.tree-sitter-grammars;
-          [ tree-sitter-markdown ];
+          [ tree-sitter-markdown tree-sitter-json tree-sitter-python ];
         propagatedPkgs = with pkgs; [ gtk4 libadwaita libpanel pkg-config ];
         devPkgs = with pkgs; [
           libxml2
@@ -19,6 +19,7 @@
           pkg-config
           meson
           ninja
+          basedpyright
         ];
         propagatedPythonPkgs = with python-bin.pkgs; [
           pygobject3
