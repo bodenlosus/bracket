@@ -9,17 +9,23 @@ menu editor_toolbar_menu {
     label: _("File");
 
     item {
-      label: _("New File");
+      label: _("New Text File");
       action: "win.new-file";
     }
 
     item {
       label: _("Open File");
+      action: "win.open-file";
     }
 
     item {
-      label: _("Save File");
-      action: "win.save-current";
+      label: _("Save");
+      action: "win.save-file";
+    }
+
+    item {
+      label: _("Save As ...");
+      action: "win.save-file";
     }
   }
 

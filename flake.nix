@@ -33,7 +33,7 @@
           src = ./.;
 
           nativeBuildInputs = nativePkgs ++ nativePythonPkgs
-            ++ treeSitterGrammars ++ [pkgs.wrapGAppsHook];
+            ++ treeSitterGrammars ++ [ pkgs.wrapGAppsHook ];
 
           propagatedBuildInputs = propagatedPkgs ++ propagatedPythonPkgs;
 
@@ -56,6 +56,9 @@
           venvDir = "./.venv";
           packages = nativePkgs ++ nativePythonPkgs ++ propagatedPkgs
             ++ propagatedPythonPkgs ++ devPkgs;
+          shellHook = ''
+            export XDG_DATA_DIRS=${pkgs.gtk4}/share/gsettings-schemas/gtk4-4.16.12:$XDG_DATA_DIRS
+          '';
           inputsFrom = [ editablePkg ];
         };
       });

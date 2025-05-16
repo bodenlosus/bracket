@@ -17,6 +17,7 @@ def load_resources():
         raise FileNotFoundError(f"Resource file not found: {resource_path}") 
 
     resource = Gio.Resource.load(resource_path.as_posix())
+    
     resource._register()
 
 def app():

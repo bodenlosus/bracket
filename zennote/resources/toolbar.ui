@@ -13,15 +13,20 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
     <submenu>
       <attribute name="label" translatable="yes">File</attribute>
       <item>
-        <attribute name="label" translatable="yes">New File</attribute>
+        <attribute name="label" translatable="yes">New Text File</attribute>
         <attribute name="action">win.new-file</attribute>
       </item>
       <item>
         <attribute name="label" translatable="yes">Open File</attribute>
+        <attribute name="action">win.open-file</attribute>
       </item>
       <item>
-        <attribute name="label" translatable="yes">Save File</attribute>
-        <attribute name="action">win.save-current</attribute>
+        <attribute name="label" translatable="yes">Save</attribute>
+        <attribute name="action">win.save-file</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Save As ...</attribute>
+        <attribute name="action">win.save-file</attribute>
       </item>
     </submenu>
     <submenu>

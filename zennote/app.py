@@ -5,13 +5,15 @@ import gi
 import pathlib
 import asyncio
 from enum import Enum
-from typing import Union, cast
+from typing import Callable, Union, cast
+from zennote.actions import load_accels_json, WindowActions
+from zennote.dialogs import request_open_file, request_save_file
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 gi.require_version("Panel", "1")
 import gi.events
-from gi.repository import Gtk, GLib, Adw, Panel, Gio, GObject
+from gi.repository import Gtk, GLib, Adw, Panel, Gio, GObject, GdkPixbuf
 
 
 @Gtk.Template(resource_path="/ui/tabview.ui")
@@ -27,7 +29,7 @@ class EditorTabView(Adw.Bin):
         super().__init__(**kwargs)
         # Connect the tab view to the tab bar
         self.bar.set_view(self.view)
-        self.open_file(path="/home/johannes/text.md")
+        self.new_file()
 
     def open_file(self, path: str):
 
@@ -37,6 +39,17 @@ class EditorTabView(Adw.Bin):
 
         name = pathlib.Path(path).name
         page.set_title(name)
+        self._setup_editor_bindings(page, editor) 
+        self.view.set_selected_page(page)
+    
+    def open_file_with_dialog(self):
+        def on_open(f: Gio.File | None):
+            if not f: return
+            path = f.get_path()
+            if path: 
+                self.open_file(path)
+        
+        request_open_file(on_open)
 
     def get_active_editor(self) -> Union[Editor, None]:
         page = self.view.get_selected_page()
@@ -45,14 +58,32 @@ class EditorTabView(Adw.Bin):
             return None
 
         return cast(Editor, page.get_child())
-
-    def new_file(self):
+    
+    def _setup_editor_bindings(self, page: Adw.TabPage, editor: Editor):
+        editor.bind_property(
+            "filename", page, "title", GObject.BindingFlags.BIDIRECTIONAL | GObject.BindingFlags.SYNC_CREATE
+        )
+        
+        
+    
+    def new_file(self) -> Editor:
         editor = Editor()
 
         page = self.view.prepend(editor)
-        page.set_title("Untitled")
+
+        self._setup_editor_bindings(page, editor)
 
         self.view.set_selected_page(page)
+        
+        r = Gio.File.new_for_path("/home/johannes/ZenNote/zennote/resources/icons/circle.svg")
+        f = Gtk.Image.new_from_icon_name("edit-clear")
+        print(f.get_gicon())        # print("loading:", page.get_loading()) 
+        # page.set_icon()
+        
+        # print(f.get_gicon())
+        page.set_icon(f.get_gicon())
+        
+        return editor
 
 
 @Gtk.Template(resource_path="/ui/editor.ui")
@@ -60,13 +91,21 @@ class Editor(Gtk.TextView):
     __gtype_name__ = "Editor"
     path: Union[pathlib.Path, None] = None
     buffer: Gtk.TextBuffer = Gtk.Template.Child("editor-text-buffer")
-
+    filename: GObject.Property = GObject.Property(type=str, default="Untitled")
+    saved: GObject.Property = GObject.Property(type=bool, default=False)
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.buffer.connect("changed", self._on_changed)
+    
+    def _on_changed(self, *args, **kwargs):
+        self.set_saved(False)        
 
     def open_file(self, path: str):
-        self.path = pathlib.Path(path).resolve()
+        self.set_file(path)
 
+        if not self.path:
+            return
         if not self.path.exists(follow_symlinks=True):
             return
         if not self.path.is_file():
@@ -74,10 +113,25 @@ class Editor(Gtk.TextView):
 
         with self.path.open("r") as file:
             self.buffer.set_text(file.read())
+            self.set_saved(True)
+    
+    def set_saved(self, v: bool):
+            self.set_property("saved", v)
 
-    def write_to_file(self, window: Gtk.Window):
+    def set_file(self, path: str):
+        """sets the internal path and creates it and its parents, sets the title to the files name"""
+
+        path = pathlib.Path(path).resolve()
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.touch(exist_ok=True)
+
+        self.path = path
+        
+        self.set_property("filename", path.name)
+
+    def write_to_file(self):
         if not self.path:
-            self.open_save_dialogue(window)
+            self.request_new_file_path()
             return
 
         self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -87,13 +141,16 @@ class Editor(Gtk.TextView):
             start, end = self.buffer.get_bounds()
             text = self.buffer.get_text(start, end, include_hidden_chars=True)
             file.write(text)
+            self.set_saved(True)
 
-    def open_save_dialogue(self, window: Gtk.Window):
-
-        d = Gtk.FileChooserDialog()
-        d.show()
-
-
+    def request_new_file_path(self):
+        def on_save(f: Gio.File | None):
+            if not f: return
+            path = f.get_path()
+            if path: self.set_file(path)
+        
+        request_save_file(on_save)
+        
 @Gtk.Template(resource_path="/ui/toolbar.ui")
 class EditorToolBar(Gtk.PopoverMenuBar):
     __gtype_name__ = "EditorToolBar"
@@ -112,38 +169,59 @@ class Window(Adw.ApplicationWindow):
         super().__init__(application=app)
 
     def setup_actions(self):
-        save = Gio.SimpleAction(name="save-current")
-        save.connect("activate", self.on_file_save)
+        actions: dict[WindowActions, tuple[Callable]] = {
+            "save-file": (self._on_file_save,),
+            "new-file": (self._on_file_new,),
+            "save-file-as": (self._on_file_save_as,),
+            "open-file": (self._on_file_open,),
+        }
+        
+        for name, (callback,), in actions.items():
+            action = Gio.SimpleAction(name=name)
+            action.connect("activate", callback)
+            self.add_action(action)
+            
 
-        self.add_action(save)
-
-        new_file = Gio.SimpleAction(name="new-file")
-        new_file.connect("activate", self.on_file_new)
-
-        self.add_action(new_file)
-
-    def on_file_save(self, *args, **kwargs):
+    def _on_file_save(self, *args, **kwargs):
         editor = self.tabview.get_active_editor()
 
         if not editor:
             return
 
-        editor.write_to_file(self)
+        editor.write_to_file()
+    
 
-    def on_file_new(self, *args, **kwargs):
+    def _on_file_save_as(self, *args, **kwargs):
+        editor = self.tabview.get_active_editor()
+
+        if not editor:
+            return
+        
+        editor.request_new_file_path()
+
+        editor.write_to_file()
+
+    def _on_file_new(self, *args, **kwargs):
         self.tabview.new_file()
-
-
+    
+    def _on_file_open(self, *args, **kwargs):
+        self.tabview.open_file_with_dialog()
+        
 class ZenNote(Adw.Application):
 
     def __init__(self):
         super().__init__(application_id="io.github.johannes.zennote")
         self.set_resource_base_path("/")
         asyncio.set_event_loop_policy(gi.events.GLibEventLoopPolicy())
-
+        
     def do_activate(self):
         GLib.set_application_name("zennote")
-
         window = Window(self)
         window.setup_actions()
+        self.load_accels()
         window.present()
+    
+    def load_accels(self):
+        for action, accel in load_accels_json().items():
+            print(action, accel)
+            self.set_accels_for_action(action, (accel,))

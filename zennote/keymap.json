@@ -1,0 +1,6 @@
+{
+    "win.new-file": "<Ctrl>n",
+    "win.save-file": "<Ctrl>s",
+    "win.save-file-as": "<Ctrl><Shift>s",
+    "win.open-file": "<Ctrl>o"
+}
