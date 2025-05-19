@@ -18,13 +18,13 @@
           overlays = [ rust-overlay.overlays.default ];
         };
         python = pkgs.python313;
-
+        package = python.pkgs.callPackage ./package.nix {};
         rustToolchain = pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
       in
       {
         # packages.default = pkgs.callPackage ./. {};
         devShells.default = pkgs.mkShell {
-          packages = (with pkgs; [
+          packages = [package] ++ (with pkgs; [
             pkg-config
             rustToolchain
             openssl
@@ -33,10 +33,7 @@
             cargo-edit
             cargo-watch
             rust-analyzer
-            gtk4-layer-shell
-            clang
             rustPlatform.bindgenHook
-            llvmPackages.libclang
             maturin
         ]) ++ ( with python.pkgs; [
           setuptools-rust
@@ -44,8 +41,6 @@
           wheel
         ]);
           env = {
-            LIBCLANG_PATH="${pkgs.llvmPackages.libclang.lib}";
-            # BINDGEN_EXTRA_CLANG_ARGS = "-isystem ${pkgs.llvmPackages.libclang.lib}/lib/clang/${pkgs.lib.getVersion pkgs.clang}/include";
             RUST_SRC_PATH = "${rustToolchain}/lib/rustlib/src/rust/library";
           };
         };
