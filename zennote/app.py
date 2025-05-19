@@ -90,8 +90,8 @@ class Editor(Gtk.TextView):
 
     def open_save_dialogue(self, window: Gtk.Window):
 
-        d = Gtk.FileChooserDialog()
-        d.show()
+        d = Gtk.FileDialog()
+        d.save()
 
 
 @Gtk.Template(resource_path="/ui/toolbar.ui")

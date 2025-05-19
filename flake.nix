@@ -33,7 +33,7 @@
           src = ./.;
 
           nativeBuildInputs = nativePkgs ++ nativePythonPkgs
-            ++ treeSitterGrammars ++ [pkgs.wrapGAppsHook];
+            ++ treeSitterGrammars ++ [ pkgs.wrapGAppsHook ];
 
           propagatedBuildInputs = propagatedPkgs ++ propagatedPythonPkgs;
 
@@ -56,6 +56,9 @@
           venvDir = "./.venv";
           packages = nativePkgs ++ nativePythonPkgs ++ propagatedPkgs
             ++ propagatedPythonPkgs ++ devPkgs;
+          shellHook = ''
+            export \XDG_DATA_DIRS=${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/gsettings-desktop-schemas-47.1:\$XDG_DATA_DIRS
+          '';
           inputsFrom = [ editablePkg ];
         };
       });

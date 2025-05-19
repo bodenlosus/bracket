@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <schemalist>
-  <schema id="io.github.johannes.zennote" path="/io/github/johannes/zennote">
+  <schema id="io.github.johannes.zennote" path="/io/github/johannes/zennote/">
     <key name="is-switch-enabled" type="b">
       <default>false</default>
       <summary>Default switch state</summary>
