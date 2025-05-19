@@ -37,11 +37,11 @@
             clang
             rustPlatform.bindgenHook
             llvmPackages.libclang
+            maturin
         ]) ++ ( with python.pkgs; [
           setuptools-rust
           pip
           wheel
-          maturin
         ]);
           env = {
             LIBCLANG_PATH="${pkgs.llvmPackages.libclang.lib}";
