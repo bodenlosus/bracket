@@ -13,24 +13,33 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
     <submenu>
       <attribute name="label" translatable="yes">File</attribute>
       <item>
-        <attribute name="label" translatable="yes">New File</attribute>
+        <attribute name="label">New Text File</attribute>
         <attribute name="action">win.new-file</attribute>
       </item>
       <item>
-        <attribute name="label" translatable="yes">Open File</attribute>
+        <attribute name="label">Open File</attribute>
+        <attribute name="action">win.open-file</attribute>
       </item>
       <item>
-        <attribute name="label" translatable="yes">Save File</attribute>
-        <attribute name="action">win.save-current</attribute>
+        <attribute name="label">Save</attribute>
+        <attribute name="action">win.save-file</attribute>
+      </item>
+      <item>
+        <attribute name="label">Save As ...</attribute>
+        <attribute name="action">win.save-file</attribute>
+      </item>
+      <item>
+        <attribute name="label">Close</attribute>
+        <attribute name="action">win.close-file</attribute>
       </item>
     </submenu>
     <submenu>
       <attribute name="label" translatable="yes">Edit</attribute>
       <item>
-        <attribute name="label" translatable="yes">Undo</attribute>
+        <attribute name="label">Undo</attribute>
       </item>
       <item>
-        <attribute name="label" translatable="yes">Redo</attribute>
+        <attribute name="label">Redo</attribute>
       </item>
     </submenu>
   </menu>

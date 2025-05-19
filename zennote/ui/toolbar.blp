@@ -7,31 +7,16 @@ template $EditorToolBar: PopoverMenuBar {
 menu editor_toolbar_menu {
   submenu {
     label: _("File");
-
-    item {
-      label: _("New File");
-      action: "win.new-file";
-    }
-
-    item {
-      label: _("Open File");
-    }
-
-    item {
-      label: _("Save File");
-      action: "win.save-current";
-    }
+    item ("New Text File", "win.new-file")
+    item ("Open File", "win.open-file")
+    item ("Save", "win.save-file")
+    item ("Save As ...", "win.save-file")
+    item ("Close", "win.close-file")
   }
 
   submenu {
     label: _("Edit");
-
-    item {
-      label: _("Undo");
-    }
-
-    item {
-      label: _("Redo");
-    }
+    item ("Undo")
+    item ("Redo")
   }
 }

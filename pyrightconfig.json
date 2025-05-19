@@ -1,0 +1,8 @@
+{
+  "deprecateTypingAliases": true,
+  "reportUnusedCallResult": false,
+  "reportExplicitAny": false,
+  "analyzeUnannotatedFunctions": true,
+  "useLibraryCodeForTypes": true,
+  "reportAny": "hint"
+}
