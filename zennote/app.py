@@ -65,7 +65,7 @@ class Window(Adw.ApplicationWindow):
         if not editor:
             return
 
-        editor.request_new_file_path()
+        editor.request_new_file_path(lambda x: None)
 
         editor.write_to_file()
 

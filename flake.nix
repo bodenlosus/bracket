@@ -1,18 +1,20 @@
 {
   inputs.flake-utils.url = "github:numtide/flake-utils";
   inputs.nixpkgs.url = "nixpkgs/nixos-unstable";
+  inputs.highlighter.url = "path:./highlighter";
 
-  outputs = { self, nixpkgs, flake-utils, ... }:
+  outputs = inputs@{ self, nixpkgs, flake-utils, ... }:
     flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" ] (system:
       let
         pkgs = import nixpkgs { system = "x86_64-linux"; };
         pyproject = builtins.fromTOML (builtins.readFile ./pyproject.toml);
         python-bin = pkgs.python313;
-        nativePkgs = with pkgs; [ gobject-introspection ];
-        nativePythonPkgs = with python-bin.pkgs; [ setuptools tree-sitter ];
-        treeSitterGrammars = with python-bin.pkgs.tree-sitter-grammars;
-          [ tree-sitter-markdown tree-sitter-json tree-sitter-python ];
+        highlighter = python-bin.pkgs.callPackage ./highlighter/package.nix {};
+        nativePkgs = [highlighter] ++ (with pkgs; [ gobject-introspection ]);
+        nativePythonPkgs = with python-bin.pkgs; [ setuptools ];
+
         propagatedPkgs = with pkgs; [ gtk4 libadwaita libpanel pkg-config ];
+
         devPkgs = with pkgs; [
           libxml2
           blueprint-compiler
@@ -20,6 +22,8 @@
           meson
           ninja
           basedpyright
+          openssl
+          mypy
         ];
         propagatedPythonPkgs = with python-bin.pkgs; [
           pygobject3
@@ -34,7 +38,7 @@
           src = ./.;
 
           nativeBuildInputs = nativePkgs ++ nativePythonPkgs
-            ++ treeSitterGrammars ++ [ pkgs.wrapGAppsHook ];
+            ++ [ pkgs.wrapGAppsHook ];
 
           propagatedBuildInputs = propagatedPkgs ++ propagatedPythonPkgs;
 

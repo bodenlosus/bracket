@@ -1,0 +1,19 @@
+from __future__ import annotations
+
+class HLEvent:
+    pass
+
+class Source(HLEvent):
+    _0: int
+    _1: int
+    def __new__(cls, arg0: int, arg1: int) -> Source: ...
+class Start(HLEvent):
+    _0: str
+    def __new__(cls, arg0: str) -> Start: ...
+class End(HLEvent):
+    def __new__(cls) -> End: ...
+
+class Highlighter:
+    def __init__(self, recognized_names: list[str]): ...
+    def highlight(self, code: str) -> list[HLEvent]: ...
+    def set_language(self) -> None: ...

@@ -1,5 +1,10 @@
-
-from gi.repository import Adw, GObject, Gdk, Gio, Gtk # pyright: ignore[reportMissingModuleSource]
+from gi.repository import (
+    Adw,
+    GObject,
+    Gdk,
+    Gio,
+    Gtk,
+)  # pyright: ignore[reportMissingModuleSource]
 from zennote.dialogs import UnsavedResponse, request_open_file, unsaved_dialog
 from zennote.editor import Editor
 
@@ -7,6 +12,7 @@ import pathlib
 from typing import cast
 
 from zennote.utils import Args, KwArgs
+
 
 @Gtk.Template(resource_path="/ui/tabview.ui")
 # kann nicht von Adw.ToolbarView verbt werden maaaan
@@ -36,7 +42,8 @@ class EditorTabView(Adw.Bin):
 
     def open_file_with_dialog(self):
         def on_open(f: Gio.File | None):
-            if not f: return
+            if not f:
+                return
             path = f.get_path()
             if path:
                 self.open_file(path)
@@ -53,11 +60,16 @@ class EditorTabView(Adw.Bin):
 
     def _setup_editor_bindings(self, page: Adw.TabPage, editor: Editor):
         editor.bind_property(
-            "filename", page, "title", GObject.BindingFlags.BIDIRECTIONAL | GObject.BindingFlags.SYNC_CREATE
+            "filename",
+            page,
+            "title",
+            GObject.BindingFlags.BIDIRECTIONAL | GObject.BindingFlags.SYNC_CREATE,
         )
 
     @Gtk.Template.Callback()
-    def _on_close(self, view: Adw.TabView, page: Adw.TabPage, *_args: Args, **_kwargs: KwArgs):
+    def _on_close(
+        self, view: Adw.TabView, page: Adw.TabPage, *_args: Args, **_kwargs: KwArgs
+    ):
         editor: Editor = cast(Editor, page.get_child())
 
         if editor.is_saved():
@@ -65,23 +77,27 @@ class EditorTabView(Adw.Bin):
             return Gdk.EVENT_STOP
 
         def cb(res: UnsavedResponse):
-            if res == 'save':
-                def cb(close: bool):
-                    view.close_page_finish(page, close)
-                editor.write_to_file(cb)
+            match res:
+                case "save":
 
-            elif res == "cancel": view.close_page_finish(page, False)
-            elif res == "discard": view.close_page_finish(page, True)
+                    def cb(close: bool):
+                        view.close_page_finish(page, close)
+
+                    editor.write_to_file(cb)
+
+                case "cancel":
+                    view.close_page_finish(page, False)
+                case "discard":
+                    view.close_page_finish(page, True)
 
         unsaved_dialog(cb, editor.get_filename())
 
         return Gdk.EVENT_STOP
 
-    @Gtk.Template.Callback() # pyright: ignore[reportAny,]
+    @Gtk.Template.Callback()  # pyright: ignore[reportAny,]
     def _on_context(self, *_args: Args, **_kwargs: KwArgs):
         print(_args)
         print(_kwargs)
-
 
     def new_file(self) -> Editor:
         editor = Editor(saved=True)
@@ -97,4 +113,5 @@ class EditorTabView(Adw.Bin):
     def close_active(self):
         page = self.view.get_selected_page()
 
-        if page: self.view.close_page(page)
+        if page:
+            self.view.close_page(page)

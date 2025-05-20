@@ -1,14 +1,45 @@
-from gi.repository import GObject, Gio, Gtk, Pango # pyright: ignore[reportMissingModuleSource]
+from gi.repository import (
+    GObject,
+    Gio,
+    Gtk,
+    Pango,
+)  # pyright: ignore[reportMissingModuleSource]
 
 from zennote.dialogs import request_save_file
 import pathlib
 from typing import Any, Callable, cast
-import tree_sitter
-import tree_sitter_json
-import tree_sitter_markdown
-import tree_sitter_python
 
 from zennote.utils import Args, KwArgs
+from highlighter import
+
+recognized_names = [
+    "attribute",
+    "comment",
+    "constant",
+    "constant.builtin",
+    "constructor",
+    "embedded",
+    "function",
+    "function.builtin",
+    "keyword",
+    "module",
+    "number",
+    "operator",
+    "property",
+    "property.builtin",
+    "punctuation",
+    "punctuation.bracket",
+    "punctuation.delimiter",
+    "punctuation.special",
+    "string",
+    "string.special",
+    "tag",
+    "type",
+    "type.builtin",
+    "variable",
+    "variable.builtin",
+    "variable.parameter",
+];
 
 class TagFormat:
     def __init__(
@@ -17,18 +48,20 @@ class TagFormat:
         background: str | None = None,
         underline: Pango.Underline | None = None,
         weight: Pango.Weight | None = None,
-        style: Pango.Style | None = None
+        style: Pango.Style | None = None,
     ):
         self.__inner = {
             "weight": weight,
             "foreground": foreground,
             "background": background,
             "underline": underline,
-            "style": style
+            "style": style,
         }
 
     def to_dict(self):
-        res:  dict[str, Pango.Weight | str | Pango.Underline | Pango.Style | None] = dict()
+        res: dict[str, Pango.Weight | str | Pango.Underline | Pango.Style | None] = (
+            dict()
+        )
 
         for k, v in self.__inner.items():
             if not v:
@@ -36,6 +69,7 @@ class TagFormat:
             res[k] = v
 
         return res
+
 
 c = {
     "00": "#1C1E26",
@@ -56,11 +90,6 @@ c = {
     "0F": "#E4A382",
 }
 
-tags_styles: dict[str, TagFormat] = {
-
-}
-
-tags = set(tags_styles.keys())
 
 
 @Gtk.Template(resource_path="/ui/editor.ui")
@@ -70,22 +99,17 @@ class Editor(Gtk.TextView):
     buffer: Gtk.TextBuffer = Gtk.Template.Child("editor-text-buffer")
     filename: GObject.Property = GObject.Property(type=str, default="Untitled")
     saved: GObject.Property = GObject.Property(type=bool, default=False)
-    tree: tree_sitter.Tree | None = None
+    highlighter = HL(recognized_names)
 
     def __init__(self, saved: bool = False, *_args: Any, **_kwargs: Any):
         super().__init__(*_args, **_kwargs)
         self.set_saved(saved)
-        self._create_tags()
-
-    def _create_tags(self):
-        global tags_styles
-
-        for tag, format in tags_styles.items():
-            tag = self.buffer.create_tag(tag, **format.to_dict())
+        self.highlighter.set_language()
 
     @Gtk.Template.Callback()
     def _on_changed(self, *_args: Args, **_kwargs: KwArgs):
         self.set_saved(False)
+        self.highlight()
 
     def get_filename(self) -> str:
         return cast(str, self.get_property("filename"))
@@ -151,20 +175,25 @@ class Editor(Gtk.TextView):
     def request_new_file_path(self, cb: Callable[[bool], None] | None = None):
         def on_save(f: Gio.File | None):
             if not f:
-                if cb:
-                    cb(False)
+                if cb: cb(False)
                 return
 
             path = f.get_path()
 
             if not path:
-                if cb:
-                    cb(False)
+                if cb: cb(False)
                 return
 
             self.set_file(path)
 
-            if cb:
-                cb(True)
+            if cb: cb(True)
 
         request_save_file(on_save)
+
+    def highlight(self):
+        text = self.get_text()
+
+        events = self.highlighter.highlight(text)
+
+        for i in events:
+            print(type(i))

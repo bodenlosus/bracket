@@ -1,12 +1,10 @@
 use pyo3::{exceptions::PyOSError, prelude::*};
-use std::{
-    cell::{Cell, RefCell},
-    error::Error,
-    sync::RwLock,
-};
-use tree_sitter_highlight::{HighlightConfiguration, Highlighter};
+use std::error::Error;
+use std::sync::RwLock;
+use tree_sitter_highlight as hl;
 
-const HIGHLIGHT_NAMES: [&str; 26] = [
+/*
+x = [
     "attribute",
     "comment",
     "constant",
@@ -34,12 +32,20 @@ const HIGHLIGHT_NAMES: [&str; 26] = [
     "variable.builtin",
     "variable.parameter",
 ];
+*/
 
 #[pyclass]
-pub struct HL {
-    highlighter: RwLock<Highlighter>,
+pub enum HLEvent {
+    Source(usize, usize),
+    Start(String),
+    End(),
+}
+
+#[pyclass]
+pub struct Highlighter {
+    highlighter: RwLock<hl::Highlighter>,
     recognized_names: Vec<String>,
-    configuration: RwLock<Option<HighlightConfiguration>>,
+    configuration: RwLock<Option<hl::HighlightConfiguration>>,
 }
 #[derive(Debug)]
 struct HighlighterError {
@@ -71,20 +77,19 @@ impl std::convert::Into<PyErr> for HighlighterError {
         PyOSError::new_err(self.to_string())
     }
 }
-
 #[pymethods]
-impl HL {
+impl Highlighter {
     #[new]
-    pub fn new() -> Self {
+    pub fn new(recognized_names: Vec<String>) -> Self {
         Self {
-            highlighter: RwLock::new(Highlighter::new()),
-            recognized_names: Vec::new(),
+            highlighter: RwLock::new(hl::Highlighter::new()),
+            recognized_names,
             configuration: RwLock::new(None),
         }
     }
     pub fn set_language(&self) -> PyResult<()> {
         let lang = tree_sitter_python::LANGUAGE;
-        let mut config = match HighlightConfiguration::new(
+        let mut config = match hl::HighlightConfiguration::new(
             lang.into(),
             "python",
             tree_sitter_python::HIGHLIGHTS_QUERY,
@@ -109,8 +114,7 @@ impl HL {
 
         Ok(())
     }
-    pub fn highlight(&self, string: &str) -> PyResult<()> {
-        println!("Input: {string}");
+    pub fn highlight(&self, string: &str) -> PyResult<Vec<HLEvent>> {
         let string = string.trim_start().trim_end();
         let config = self.configuration.try_read();
         let Ok(config) = config.as_ref() else {
@@ -133,6 +137,8 @@ impl HL {
             }
         };
 
+        let mut res: Vec<HLEvent> = Vec::new();
+
         for event in highlights {
             let Ok(event) = event else {
                 continue;
@@ -140,31 +146,18 @@ impl HL {
 
             match event {
                 tree_sitter_highlight::HighlightEvent::Source { start, end } => {
-                    let s = &string[start..end].replace("\n", "\\n");
-                    println!("String: {s}");
-                    println!("{start} - {end} ")
+                    res.push(HLEvent::Source(start, end))
                 }
                 tree_sitter_highlight::HighlightEvent::HighlightStart(highlight) => {
-                    let hl_type = HIGHLIGHT_NAMES.get(highlight.0);
+                    let hl_type = self.recognized_names.get(highlight.0);
                     if let Some(hl_type) = hl_type {
-                        println!("Name: {hl_type}");
+                        res.push(HLEvent::Start(hl_type.clone()));
                     }
                 }
-                tree_sitter_highlight::HighlightEvent::HighlightEnd => println!("style ended \n"),
+                tree_sitter_highlight::HighlightEvent::HighlightEnd => res.push(HLEvent::End()),
             }
         }
 
-        Ok(())
+        Ok(res)
     }
 }
-
-/// A Python module implemented in Rust.
-const CODE: &str = "
-
-def hello(s:str):
-    print(s + \"Hello\")
-    return s
-
-if __name__ == \"__main__\":
-    hello()
-";
