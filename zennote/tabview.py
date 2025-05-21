@@ -90,6 +90,7 @@ class EditorTabView(Adw.Bin):
                 case "discard":
                     view.close_page_finish(page, True)
 
+        print("file unsaved")
         unsaved_dialog(cb, editor.get_filename())
 
         return Gdk.EVENT_STOP

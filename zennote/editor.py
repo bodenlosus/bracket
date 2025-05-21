@@ -9,87 +9,9 @@ from zennote.dialogs import request_save_file
 import pathlib
 from typing import Any, Callable, cast
 
+from zennote.themes import load_theme_from_file
 from zennote.utils import Args, KwArgs
-from highlighter import
-
-recognized_names = [
-    "attribute",
-    "comment",
-    "constant",
-    "constant.builtin",
-    "constructor",
-    "embedded",
-    "function",
-    "function.builtin",
-    "keyword",
-    "module",
-    "number",
-    "operator",
-    "property",
-    "property.builtin",
-    "punctuation",
-    "punctuation.bracket",
-    "punctuation.delimiter",
-    "punctuation.special",
-    "string",
-    "string.special",
-    "tag",
-    "type",
-    "type.builtin",
-    "variable",
-    "variable.builtin",
-    "variable.parameter",
-];
-
-class TagFormat:
-    def __init__(
-        self,
-        foreground: str | None = None,
-        background: str | None = None,
-        underline: Pango.Underline | None = None,
-        weight: Pango.Weight | None = None,
-        style: Pango.Style | None = None,
-    ):
-        self.__inner = {
-            "weight": weight,
-            "foreground": foreground,
-            "background": background,
-            "underline": underline,
-            "style": style,
-        }
-
-    def to_dict(self):
-        res: dict[str, Pango.Weight | str | Pango.Underline | Pango.Style | None] = (
-            dict()
-        )
-
-        for k, v in self.__inner.items():
-            if not v:
-                continue
-            res[k] = v
-
-        return res
-
-
-c = {
-    "00": "#1C1E26",
-    "01": "#232530",
-    "02": "#2E303E",
-    "03": "#6F6F70",
-    "04": "#9DA0A2",
-    "05": "#CBCED0",
-    "06": "#DCDFE4",
-    "07": "#E3E6EE",
-    "08": "#E93C58",
-    "09": "#E58D7D",
-    "0A": "#EFB993",
-    "0B": "#EFAF8E",
-    "0C": "#24A8B4",
-    "0D": "#DF5273",
-    "0E": "#B072D1",
-    "0F": "#E4A382",
-}
-
+from highlighter import HLEvent, Highlighter
 
 
 @Gtk.Template(resource_path="/ui/editor.ui")
@@ -99,12 +21,25 @@ class Editor(Gtk.TextView):
     buffer: Gtk.TextBuffer = Gtk.Template.Child("editor-text-buffer")
     filename: GObject.Property = GObject.Property(type=str, default="Untitled")
     saved: GObject.Property = GObject.Property(type=bool, default=False)
-    highlighter = HL(recognized_names)
+    recognized_names: list[str] = []
 
     def __init__(self, saved: bool = False, *_args: Any, **_kwargs: Any):
         super().__init__(*_args, **_kwargs)
         self.set_saved(saved)
+        self._load_tags()
+        self.highlighter = Highlighter(self.recognized_names)
         self.highlighter.set_language()
+
+    def _load_tags(self):
+        tagtable = self.buffer.get_tag_table()
+
+        path = pathlib.Path(__file__).parent.resolve() / "tags.json"
+        theme = load_theme_from_file(path)
+        if not theme:
+            return
+        for name, tag in theme:
+            tagtable.add(tag)
+            self.recognized_names.append(name)
 
     @Gtk.Template.Callback()
     def _on_changed(self, *_args: Args, **_kwargs: KwArgs):
@@ -132,6 +67,11 @@ class Editor(Gtk.TextView):
         return cast(bool, self.get_property("saved"))
 
     def set_saved(self, v: bool):
+        match v:
+            case True:
+                print("saved")
+            case False:
+                print("unsaved")
         self.set_property("saved", v)
 
     def set_file(self, path: str):
@@ -160,6 +100,7 @@ class Editor(Gtk.TextView):
                 file.write(text)
 
             self.set_saved(True)
+
             if cb:
                 cb(True)
 
@@ -175,18 +116,22 @@ class Editor(Gtk.TextView):
     def request_new_file_path(self, cb: Callable[[bool], None] | None = None):
         def on_save(f: Gio.File | None):
             if not f:
-                if cb: cb(False)
+                if cb:
+                    cb(False)
                 return
 
             path = f.get_path()
 
             if not path:
-                if cb: cb(False)
+                if cb:
+                    cb(False)
                 return
 
             self.set_file(path)
+            self.write_to_file()
 
-            if cb: cb(True)
+            if cb:
+                cb(True)
 
         request_save_file(on_save)
 
@@ -195,5 +140,22 @@ class Editor(Gtk.TextView):
 
         events = self.highlighter.highlight(text)
 
-        for i in events:
-            print(type(i))
+        tag: str | None = None
+        bounds = self.buffer.get_bounds()
+        self.buffer.remove_all_tags(*bounds)
+
+        for event in events:
+
+            match event:
+                case HLEvent.Start():
+                    (tag,) = event
+                case HLEvent.Source():
+                    (start, end) = event
+                    start_iter = self.buffer.get_iter_at_offset(start)
+                    end_iter = self.buffer.get_iter_at_offset(end)
+
+                    if tag:
+                        self.buffer.apply_tag_by_name(tag, start_iter, end_iter)
+
+                case HLEvent.End():
+                    tag = None
