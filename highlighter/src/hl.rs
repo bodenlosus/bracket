@@ -115,6 +115,10 @@ impl Highlighter {
         Ok(())
     }
     pub fn highlight(&self, string: &str) -> PyResult<Vec<HLEvent>> {
+        let leading_white_space = string
+            .find(|c: char| !c.is_whitespace())
+            .unwrap_or(string.len());
+
         let string = string.trim_start().trim_end();
         let config = self.configuration.try_read();
         let Ok(config) = config.as_ref() else {
@@ -145,9 +149,9 @@ impl Highlighter {
             };
 
             match event {
-                tree_sitter_highlight::HighlightEvent::Source { start, end } => {
-                    res.push(HLEvent::Source(start, end))
-                }
+                tree_sitter_highlight::HighlightEvent::Source { start, end } => res.push(
+                    HLEvent::Source(start + leading_white_space, end + leading_white_space),
+                ),
                 tree_sitter_highlight::HighlightEvent::HighlightStart(highlight) => {
                     let hl_type = self.recognized_names.get(highlight.0);
                     if let Some(hl_type) = hl_type {

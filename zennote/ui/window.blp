@@ -12,16 +12,15 @@ template $Window: Adw.ApplicationWindow {
     condition ("max-width: 500sp")
 
     setters {
-      split_view.collapsed: true;
+      split-view.collapsed: true;
     }
   }
 
-  content: Adw.NavigationSplitView split_view {
+  content: Adw.NavigationSplitView split-view {
     min-sidebar-width: 200;
-
     sidebar: Adw.NavigationPage {};
-
-    content: Adw.NavigationPage task_page {
+    sidebar-position: end;
+    content: Adw.NavigationPage task-page {
       margin-start: 5;
 
       Adw.ToolbarView {

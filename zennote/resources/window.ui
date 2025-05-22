@@ -14,17 +14,18 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
     <child>
       <object class="AdwBreakpoint">
         <condition>max-width: 500sp</condition>
-        <setter object="split_view" property="collapsed">true</setter>
+        <setter object="split-view" property="collapsed">true</setter>
       </object>
     </child>
     <property name="content">
-      <object class="AdwNavigationSplitView" id="split_view">
+      <object class="AdwNavigationSplitView" id="split-view">
         <property name="min-sidebar-width">200</property>
         <property name="sidebar">
           <object class="AdwNavigationPage"></object>
         </property>
+        <property name="sidebar-position">1</property>
         <property name="content">
-          <object class="AdwNavigationPage" id="task_page">
+          <object class="AdwNavigationPage" id="task-page">
             <property name="margin-start">5</property>
             <child>
               <object class="AdwToolbarView">

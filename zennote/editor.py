@@ -7,7 +7,7 @@ from gi.repository import (
 
 from zennote.dialogs import request_save_file
 import pathlib
-from typing import Any, Callable, cast
+from typing import Any, Callable, cast, final
 
 from zennote.themes import load_theme_from_file
 from zennote.utils import Args, KwArgs
@@ -18,7 +18,9 @@ from highlighter import HLEvent, Highlighter
 class Editor(Gtk.TextView):
     __gtype_name__ = "Editor"
     path: pathlib.Path | None = None
-    buffer: Gtk.TextBuffer = Gtk.Template.Child("editor-text-buffer")
+    buffer: Gtk.TextBuffer = cast(
+        Gtk.TextBuffer, Gtk.Template.Child("editor-text-buffer")
+    )
     filename: GObject.Property = GObject.Property(type=str, default="Untitled")
     saved: GObject.Property = GObject.Property(type=bool, default=False)
     recognized_names: list[str] = []
@@ -74,10 +76,11 @@ class Editor(Gtk.TextView):
                 print("unsaved")
         self.set_property("saved", v)
 
-    def set_file(self, path: str):
+    def set_file(self, path: str | pathlib.Path):
         """sets the internal path and creates it and its parents, sets the title to the files name"""
 
-        file_path = pathlib.Path(path).resolve()
+        if isinstance(str, path):
+            file_path = pathlib.Path(path).resolve()
         file_path.parent.mkdir(parents=True, exist_ok=True)
         file_path.touch(exist_ok=True)
 
@@ -156,6 +159,7 @@ class Editor(Gtk.TextView):
 
                     if tag:
                         self.buffer.apply_tag_by_name(tag, start_iter, end_iter)
-
                 case HLEvent.End():
                     tag = None
+                case _:
+                    pass

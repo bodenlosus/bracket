@@ -1,5 +1,6 @@
 from __future__ import annotations
 from collections.abc import Sequence
+from os import wait
 import pathlib
 from typing import override
 import typing
@@ -33,6 +34,7 @@ class Window(Adw.ApplicationWindow):
     __gtype_name__: str = "Window"
     tabview: EditorTabView = cast(EditorTabView, Gtk.Template.Child("editor-tabview"))
     toolbar: EditorToolBar = cast(EditorToolBar, Gtk.Template.Child("editor-toolbar"))
+    working_dir: pathlib.Path | None = None
 
     def __init__(self, app: Adw.Application):
         super().__init__(application=app)
@@ -75,6 +77,9 @@ class Window(Adw.ApplicationWindow):
 
         editor.write_to_file()
 
+    def set_working_dir(self, path: pathlib.Path):
+        self.working_dir = path
+
     def _on_file_new(self, *_args: Args, **_kwargs: KwArgs):
         self.tabview.new_file()
 
@@ -84,7 +89,9 @@ class Window(Adw.ApplicationWindow):
 
 class ZenNote(Adw.Application):
 
-    opened_files: list[pathlib.Path] = []
+    directories: list[pathlib.Path] = []
+    files: list[pathlib.Path] = []
+    active_window: Gtk.Window | None = None
 
     def __init__(self):
         super().__init__(
@@ -92,16 +99,27 @@ class ZenNote(Adw.Application):
             flags=Gio.ApplicationFlags.HANDLES_OPEN,
         )
         self.set_resource_base_path("/")
-        self.active_window: Gtk.Window | None = None
 
     @override
     def do_activate(self):
-        GLib.set_application_name("zennote")
-        window = Window(self)
-        window.setup_actions()
-        self.load_accels()
-        self.active_window = window
+        if not self.directories:
+            self.directories.append(pathlib.Path.cwd())
+
+        for dir in self.directories:
+            window = Window(self)
+            window.setup_actions()
+
+            for file in self.files:
+                window.tabview.open_file()
+
+        # self.active_window = window
         window.present()
+
+    def do_startup(self) -> None:
+        self.load_accels()
+        GLib.set_application_name("zennote")
+
+        return super().do_startup()
 
     def load_accels(self):
         for action, accel in load_accels_json().items():
@@ -110,7 +128,6 @@ class ZenNote(Adw.Application):
 
     @override
     def do_open(self, files: Sequence[Gio.File], hint: str, *args, **kwargs) -> None:
-
         for file in files:
             path = file.get_path()
 
@@ -120,4 +137,9 @@ class ZenNote(Adw.Application):
             path = pathlib.Path(path)
 
             if path.is_file():
-                self.opened_files.append(path.resolve())
+                self.files.append(path)
+
+            elif path.is_dir():
+                self.directories.append(path)
+
+        self.activate()
