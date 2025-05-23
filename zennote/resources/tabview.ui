@@ -22,8 +22,16 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
           </object>
         </child>
         <property name="content">
-          <object class="AdwTabView" id="tab-view">
-            <signal name="close-page" handler="_on_close"/>
+          <object class="GtkScrolledWindow">
+            <property name="hscrollbar-policy">0</property>
+            <property name="vscrollbar-policy">1</property>
+            <child>
+              <object class="AdwTabView" id="tab-view">
+                <property name="margin-start">20</property>
+                <property name="margin-end">20</property>
+                <signal name="close-page" handler="_on_close"/>
+              </object>
+            </child>
           </object>
         </property>
       </object>

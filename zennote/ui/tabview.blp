@@ -12,8 +12,14 @@ template $EditorTabView: Adw.Bin {
         pressed => $_on_context();
       }
     }
-    content: Adw.TabView tab-view {
-      close-page => $_on_close();
-    };
+    content: Gtk.ScrolledWindow {
+      hscrollbar-policy: always;
+      vscrollbar-policy: automatic;
+      Adw.TabView tab-view {
+        margin-start: 20;
+        margin-end: 20;
+        close-page => $_on_close();
+      }
+    };   
   }
 }

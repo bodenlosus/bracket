@@ -3,4 +3,4 @@ blueprint-compiler batch-compile zennote/resources zennote/ui $(find zennote/ui/
 echo "compiling resources"
 
 glib-compile-resources zennote/resources/ui.gresource.xml --sourcedir="zennote/resources/"
-glib-compile-schemas data
+# glib-compile-schemas data

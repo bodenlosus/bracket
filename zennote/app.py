@@ -102,6 +102,9 @@ class ZenNote(Adw.Application):
 
     @override
     def do_activate(self):
+        self.load_accels()
+        GLib.set_application_name("zennote")
+
         if not self.directories:
             self.directories.append(pathlib.Path.cwd())
 
@@ -110,16 +113,12 @@ class ZenNote(Adw.Application):
             window.setup_actions()
 
             for file in self.files:
-                window.tabview.open_file()
+
+                window.tabview.open_file(file)
+
+            window.present()
 
         # self.active_window = window
-        window.present()
-
-    def do_startup(self) -> None:
-        self.load_accels()
-        GLib.set_application_name("zennote")
-
-        return super().do_startup()
 
     def load_accels(self):
         for action, accel in load_accels_json().items():

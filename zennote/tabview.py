@@ -29,7 +29,7 @@ class EditorTabView(Adw.Bin):
         self.bar.set_view(self.view)
         self.new_file()
 
-    def open_file(self, path: str | pathlib.Path):
+    def open_file(self, path: pathlib.Path):
 
         editor = Editor()
         editor.open_file(path)

@@ -8,14 +8,6 @@ template $Window: Adw.ApplicationWindow {
   width-request: 360;
   height-request: 200;
 
-  Adw.Breakpoint {
-    condition ("max-width: 500sp")
-
-    setters {
-      split-view.collapsed: true;
-    }
-  }
-
   content: Adw.NavigationSplitView split-view {
     min-sidebar-width: 200;
     sidebar: Adw.NavigationPage {};
@@ -28,8 +20,10 @@ template $Window: Adw.ApplicationWindow {
         $EditorToolBar editor-toolbar {}
 
         reveal-top-bars: true;
-
-        content: $EditorTabView editor-tabview {};
+        
+        content: $EditorTabView editor-tabview {
+             
+        };
       }
     };
   };

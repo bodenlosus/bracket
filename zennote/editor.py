@@ -51,7 +51,7 @@ class Editor(Gtk.TextView):
     def get_filename(self) -> str:
         return cast(str, self.get_property("filename"))
 
-    def open_file(self, path: str):
+    def open_file(self, path: pathlib.Path):
         self.set_file(path)
 
         if not self.path:
@@ -76,11 +76,11 @@ class Editor(Gtk.TextView):
                 print("unsaved")
         self.set_property("saved", v)
 
-    def set_file(self, path: str | pathlib.Path):
+    def set_file(self, path: pathlib.Path | str):
         """sets the internal path and creates it and its parents, sets the title to the files name"""
 
-        if isinstance(str, path):
-            file_path = pathlib.Path(path).resolve()
+        file_path = pathlib.Path(path) if isinstance(path, str) else path
+
         file_path.parent.mkdir(parents=True, exist_ok=True)
         file_path.touch(exist_ok=True)
 
