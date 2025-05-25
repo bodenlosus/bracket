@@ -16,35 +16,51 @@ from highlighter import HLEvent, Highlighter
 
 @Gtk.Template(resource_path="/ui/editor.ui")
 class Editor(Gtk.TextView):
+    """
+    Represents a text editor widget with syntax highlighting capabilities.
+    Inherits from Gtk.TextView and provides methods to open files, save files,
+    and highlight text based on recognized names from a theme.
+    """
     __gtype_name__ = "Editor"
     path: pathlib.Path | None = None
-    buffer: Gtk.TextBuffer = cast(
+    _buffer: Gtk.TextBuffer = cast(
         Gtk.TextBuffer, Gtk.Template.Child("editor-text-buffer")
     )
     filename: GObject.Property = GObject.Property(type=str, default="Untitled")
     saved: GObject.Property = GObject.Property(type=bool, default=False)
-    recognized_names: list[str] = []
+    _recognized_names: list[str] = []
 
     def __init__(self, saved: bool = False, *_args: Any, **_kwargs: Any):
         super().__init__(*_args, **_kwargs)
         self.set_saved(saved)
         self._load_tags()
-        self.highlighter = Highlighter(self.recognized_names)
+        self.highlighter = Highlighter(self._recognized_names)
         self.highlighter.set_language()
 
     def _load_tags(self):
-        tagtable = self.buffer.get_tag_table()
+        """
+        loads a theme from a JSON file and adds the tags to the text buffer's tag table.
+        The tags provide names to hightlight, as well as color and style.
+        The tags are used by the highlighter to apply styles to the text in the editor.
+        if loading the theme fails, it will simply return without doing anything.
+        The tags are then added to the text buffer's tag table.
+        """
+        tagtable = self._buffer.get_tag_table()
 
-        path = pathlib.Path(__file__).parent.resolve() / "tags.json"
+        path = pathlib.Path(__file__).parent.resolve() / "theme.json"
         theme = load_theme_from_file(path)
         if not theme:
             return
         for name, tag in theme:
             tagtable.add(tag)
-            self.recognized_names.append(name)
+            self._recognized_names.append(name)
 
     @Gtk.Template.Callback()
     def _on_changed(self, *_args: Args, **_kwargs: KwArgs):
+        """
+        Internal callback for when the text in the editor changes.
+        It sets the editor as unsaved and highlights the text.
+        """
         self.set_saved(False)
         self.highlight()
 
@@ -52,6 +68,10 @@ class Editor(Gtk.TextView):
         return cast(str, self.get_property("filename"))
 
     def open_file(self, path: pathlib.Path):
+        """
+        sets `self.path` to the given path, reads the file content and sets it to the editor's buffer.
+        If the file does not exist or isn't a file, it will return without doing anything.
+        """
         self.set_file(path)
 
         if not self.path:
@@ -62,18 +82,13 @@ class Editor(Gtk.TextView):
             return
 
         with self.path.open("r") as file:
-            self.buffer.set_text(file.read())
+            self._buffer.set_text(file.read())
             self.set_saved(True)
 
     def is_saved(self) -> bool:
         return cast(bool, self.get_property("saved"))
 
     def set_saved(self, v: bool):
-        match v:
-            case True:
-                print("saved")
-            case False:
-                print("unsaved")
         self.set_property("saved", v)
 
     def set_file(self, path: pathlib.Path | str):
@@ -89,6 +104,10 @@ class Editor(Gtk.TextView):
         self.set_property("filename", file_path.name)
 
     def write_to_file(self, cb: Callable[[bool], None] | None = None):
+        """
+        writes the current text in the editors buffer to the file specified by `self.path`.
+        If `self.path` is not set, it will request a new file path using `request_new_file_path`.
+        """
         if not self.path:
             self.request_new_file_path(cb)
             return
@@ -98,8 +117,8 @@ class Editor(Gtk.TextView):
             self.path.touch(exist_ok=True)
 
             with self.path.open("w") as file:
-                start, end = self.buffer.get_bounds()
-                text = self.buffer.get_text(start, end, include_hidden_chars=True)
+                start, end = self._buffer.get_bounds()
+                text = self._buffer.get_text(start, end, include_hidden_chars=True)
                 file.write(text)
 
             self.set_saved(True)
@@ -113,10 +132,18 @@ class Editor(Gtk.TextView):
                 cb(False)
 
     def get_text(self) -> str:
-        start, end = self.buffer.get_bounds()
-        return self.buffer.get_text(start, end, include_hidden_chars=True)
+        """
+        retrieves and returns the text from the editor's buffer
+        """
+        start, end = self._buffer.get_bounds()
+        return self._buffer.get_text(start, end, include_hidden_chars=True)
 
     def request_new_file_path(self, cb: Callable[[bool], None] | None = None):
+        """
+        Opens a file chooser dialog to request a new file path. 
+        If a file is selected, it sets the file path and writes the current text to that file.
+        Callback `cb` is called with `True` if the file was saved successfully, or `False` if no file was selected or an error occurred.
+        """
         def on_save(f: Gio.File | None):
             if not f:
                 if cb:
@@ -139,13 +166,16 @@ class Editor(Gtk.TextView):
         request_save_file(on_save)
 
     def highlight(self):
+        """
+        Highlights the text in the editor using the highlighter.
+        """
         text = self.get_text()
 
         events = self.highlighter.highlight(text)
 
         tag: str | None = None
-        bounds = self.buffer.get_bounds()
-        self.buffer.remove_all_tags(*bounds)
+        bounds = self._buffer.get_bounds()
+        self._buffer.remove_all_tags(*bounds)
 
         for event in events:
 
@@ -154,11 +184,11 @@ class Editor(Gtk.TextView):
                     (tag,) = event
                 case HLEvent.Source():
                     (start, end) = event
-                    start_iter = self.buffer.get_iter_at_offset(start)
-                    end_iter = self.buffer.get_iter_at_offset(end)
+                    start_iter = self._buffer.get_iter_at_offset(start)
+                    end_iter = self._buffer.get_iter_at_offset(end)
 
                     if tag:
-                        self.buffer.apply_tag_by_name(tag, start_iter, end_iter)
+                        self._buffer.apply_tag_by_name(tag, start_iter, end_iter)
                 case HLEvent.End():
                     tag = None
                 case _:

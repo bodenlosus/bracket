@@ -1,0 +1,13 @@
+using Gtk 4.0;
+
+template $DirectoryBrowser : Gtk.ListView {
+    margin-top: 5;
+    single-click-activate: true;
+    activate => $_on_activate();
+    model: Gtk.SingleSelection selection-model { 
+    };
+    factory: Gtk.SignalListItemFactory {
+        setup => $_on_factory_setup();
+        bind => $_on_factory_bind();
+    };
+}

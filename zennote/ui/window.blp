@@ -8,11 +8,19 @@ template $Window: Adw.ApplicationWindow {
   width-request: 360;
   height-request: 200;
 
-  content: Adw.NavigationSplitView split-view {
+  content: Adw.NavigationSplitView {
     min-sidebar-width: 200;
-    sidebar: Adw.NavigationPage {};
+    sidebar: Adw.NavigationPage {
+      Gtk.ScrolledWindow {
+        vscrollbar-policy: always;
+        hscrollbar-policy: automatic;
+        css-classes: ["sidebara"];
+        $DirectoryBrowser dir-browser {}
+      }
+      
+    };
     sidebar-position: end;
-    content: Adw.NavigationPage task-page {
+    content: Adw.NavigationPage {
       margin-start: 5;
 
       Adw.ToolbarView {

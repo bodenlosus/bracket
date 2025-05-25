@@ -11,21 +11,26 @@ corresponding .blp file and regenerate this file with blueprint-compiler.
     <property name="title" translatable="yes">To-Do</property>
     <property name="width-request">360</property>
     <property name="height-request">200</property>
-    <child>
-      <object class="AdwBreakpoint">
-        <condition>max-width: 500sp</condition>
-        <setter object="split-view" property="collapsed">true</setter>
-      </object>
-    </child>
     <property name="content">
-      <object class="AdwNavigationSplitView" id="split-view">
+      <object class="AdwNavigationSplitView">
         <property name="min-sidebar-width">200</property>
         <property name="sidebar">
-          <object class="AdwNavigationPage"></object>
+          <object class="AdwNavigationPage">
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="vscrollbar-policy">0</property>
+                <property name="hscrollbar-policy">1</property>
+                <property name="css-classes">sidebara</property>
+                <child>
+                  <object class="DirectoryBrowser" id="dir-browser"></object>
+                </child>
+              </object>
+            </child>
+          </object>
         </property>
         <property name="sidebar-position">1</property>
         <property name="content">
-          <object class="AdwNavigationPage" id="task-page">
+          <object class="AdwNavigationPage">
             <property name="margin-start">5</property>
             <child>
               <object class="AdwToolbarView">

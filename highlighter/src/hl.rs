@@ -3,37 +3,6 @@ use std::error::Error;
 use std::sync::RwLock;
 use tree_sitter_highlight as hl;
 
-/*
-x = [
-    "attribute",
-    "comment",
-    "constant",
-    "constant.builtin",
-    "constructor",
-    "embedded",
-    "function",
-    "function.builtin",
-    "keyword",
-    "module",
-    "number",
-    "operator",
-    "property",
-    "property.builtin",
-    "punctuation",
-    "punctuation.bracket",
-    "punctuation.delimiter",
-    "punctuation.special",
-    "string",
-    "string.special",
-    "tag",
-    "type",
-    "type.builtin",
-    "variable",
-    "variable.builtin",
-    "variable.parameter",
-];
-*/
-
 #[pyclass]
 pub enum HLEvent {
     Source(usize, usize),

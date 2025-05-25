@@ -5,8 +5,9 @@
     <file compressed="true" preprocess="xml-stripblanks">tabview.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">toolbar.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">editor.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">directory_browser.ui</file>
   </gresource>
-  <gresource prefix="/icons">
-    <file preprocess="xml-stripblanks" alias="circle.svg">icons/circle.svg</file>
+  <gresource prefix="/styles">
+    <file alias="style.css" compressed="true">styles/style.css</file>
   </gresource>
 </gresources>

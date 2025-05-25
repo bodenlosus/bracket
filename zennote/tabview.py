@@ -30,6 +30,10 @@ class EditorTabView(Adw.Bin):
         self.new_file()
 
     def open_file(self, path: pathlib.Path):
+        """
+        opens a path to a file in the tabview.
+        path may not be a valid file, in which case it will simply not open
+        """
 
         editor = Editor()
         editor.open_file(path)
@@ -46,7 +50,7 @@ class EditorTabView(Adw.Bin):
                 return
             path = f.get_path()
             if path:
-                self.open_file(path)
+                self.open_file(pathlib.Path(path))
 
         request_open_file(on_open)
 
@@ -95,6 +99,7 @@ class EditorTabView(Adw.Bin):
 
         return Gdk.EVENT_STOP
 
+    # Für Kontextmenü - Todo
     @Gtk.Template.Callback()  # pyright: ignore[reportAny,]
     def _on_context(self, *_args: Args, **_kwargs: KwArgs):
         print(_args)
