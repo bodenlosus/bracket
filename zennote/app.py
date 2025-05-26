@@ -7,7 +7,7 @@ from typing import override
 import gi
 from typing import Callable
 from zennote.tabview import EditorTabView
-from zennote.actions import load_accels_json, WindowActions
+from zennote.actions import load_accels_json, ACTIONS
 from zennote.utils import Args, KwArgs
 from zennote.directory_browser import DirectoryBrowser
 
@@ -56,7 +56,7 @@ class Window(Adw.ApplicationWindow):
     # sets up keybinds and actions for the window (actions can be thought of as events here emittet by some widget and handled at window or app level)
     def setup_actions(self):
         # done via dict and loop to save on some lines
-        actions: dict[WindowActions, tuple[Callable[[], None]]] = {
+        actions: dict[str, tuple[Callable[[], None]]] = {
             "save-file": (self._on_file_save,),
             "new-file": (self._on_file_new,),
             "save-file-as": (self._on_file_save_as,),

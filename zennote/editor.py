@@ -55,16 +55,22 @@ class Editor(Gtk.TextView):
         if loading the theme fails, it will simply return without doing anything.
         The tags are then added to the text buffer's tag table.
         """
+        # get the tag table from the text buffer
         tagtable = self._buffer.get_tag_table()
 
+        # load the theme from the file
         path = pathlib.Path(__file__).parent.resolve() / "theme.json"
         theme = load_theme_from_file(path)
+        
+        # if the theme is not loaded, return
         if not theme:
             return
+        
+        # iterate over the theme and add the tags to the tag table
         for name, tag in theme:
             tagtable.add(tag)
             self._recognized_names.append(name)
-
+    
     @Gtk.Template.Callback()
     def _on_changed(self, *_args: Args, **_kwargs: KwArgs):
         """
@@ -199,7 +205,7 @@ class Editor(Gtk.TextView):
         """
         Highlights the text in the editor using the highlighter.
         """
-        
+        # TODO: support for multiple languages, currently only supports python (should be the matter of an hour or less)
         # retrieve the text from the buffer
         text = self.get_text()
 
