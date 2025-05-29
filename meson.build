@@ -67,8 +67,8 @@ configure_file(
   install_dir: get_option('bindir'),
 )
 
-gnome.post_install(
-  # glib_compile_schemas: true,
-  gtk_update_icon_cache: true,
-  # update_desktop_database: true
-)
+# gnome.post_install(
+#   # glib_compile_schemas: true,
+#   # gtk_update_icon_cache: true,
+#   # update_desktop_database: true
+# )
