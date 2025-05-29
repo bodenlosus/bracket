@@ -30,7 +30,7 @@ PYTHON_DIR = py_installation.get_path('purelib')
 glib_dep = dependency('glib-2.0', version: '>= 2.67.1')
 dependency('gobject-introspection-1.0', version: '>= 1.35.0')
 dependency('gtk4', version: '>= 4.16.0')
-dependency('libadwaita-1', version: '>= 1.7')
+dependency('libadwaita-1', version: '>= 1.7', method: 'pkg-config')
 dependency('pango', version: '>= 1.44.0')
 dependency('pygobject-3.0', version: '>= 3.50.0')
 dependency('py3cairo', version: '>= 1.14.0')
@@ -42,7 +42,7 @@ install_subdir('zennote', install_dir: moduledir)
 
 highlighter_wheel_install = custom_target(
   'install-highlighter-wheel',
-  input: 'wheels/highlighter-0.1.0-cp313-cp313-linux_x86_64.whl',
+  input: files('wheels/highlighter.whl'),
   output: 'highlighter-wheel-installed',
   command: [
     py_installation,
