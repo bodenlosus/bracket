@@ -1,13 +1,12 @@
 from __future__ import annotations
 from collections.abc import Sequence
-from os import wait
 import pathlib
 from typing import override
 
 import gi
 from typing import Callable
 from zennote.tabview import EditorTabView
-from zennote.actions import load_accels_json, ACTIONS
+from zennote.actions import load_accels_json
 from zennote.utils import Args, KwArgs
 from zennote.directory_browser import DirectoryBrowser
 
@@ -140,9 +139,9 @@ class App(Adw.Application):
     files: list[pathlib.Path] = []
     active_window: Gtk.Window | None = None
 
-    def __init__(self):
+    def __init__(self, app_id: str | None = "io.github.johannes.zennote"):
         super().__init__(
-            application_id="io.github.johannes.zennote",
+            application_id=app_id,
             flags=Gio.ApplicationFlags.HANDLES_OPEN,
         )
         self.set_resource_base_path("/")

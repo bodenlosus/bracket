@@ -9,5 +9,5 @@ dependencies = ["pygobject3", "pycairo", "pygobject-stubs"]
 
 [tool.setuptools]
 packages = ["zennote"]
-[project.scripts]
-zennote = "zennote.zennote:app"
+# [project.scripts]
+# zennote = "zennote.zennote:app"

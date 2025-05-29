@@ -1,21 +1,27 @@
-
+#!@python@
 import sys
+
+# Those Values are substitued in by the build system, these are just placeholders
+PKGDATA_DIR = '@pkgdatadir@' # Directory with resources like ui definitions, styles, etc
+APPLICATION_ID = '@application_id@'
+RDNN_NAME = '@rdnn_name@' # Reverse-Domain-Name
+
+sys.path.insert(1, PKGDATA_DIR)
+
 import gi
 import pathlib
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 gi.require_version("Panel", "1")
 
-from gi.repository import Gio
+from gi.repository import Gio # pyright-i
 
 def load_resources():
     """Load resources for the ZenNote application."""
 
-    # Define the path to the resource file
-    # This assumes the resources are located in a 'resources' directory relative to this file
     # not cleanest solution, but works for now
     # TODO: use a build system to copy the resources to the right place
-    resource_path = pathlib.Path(__file__).parent.absolute() / "resources" / "ui.gresource"
+    resource_path = pathlib.Path(PKGDATA_DIR).resolve() / f"{RDNN_NAME}.gresource"
 
     # Check if the resource file exists
     if not resource_path.exists():
@@ -34,9 +40,9 @@ def app():
     # has to be loaded after the resources are loaded
     # because the resources are used in the UI
     from zennote.app import App
-    
+
     # run the application
-    zennote = App()
+    zennote = App(app_id=APPLICATION_ID)
     exit_status = zennote.run(sys.argv)
     # Exit the application with the status code returned by the run method
     sys.exit(exit_status)

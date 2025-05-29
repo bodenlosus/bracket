@@ -16,6 +16,7 @@
         propagatedPkgs = with pkgs; [ gtk4 libadwaita libpanel pkg-config ];
 
         devPkgs = with pkgs; [
+          flatpak-builder
           libxml2
           blueprint-compiler
           pkg-config
@@ -49,7 +50,8 @@
           nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [
             (python-bin.pkgs.mkPythonEditablePackage {
               pname = pyproject.project.name;
-              inherit (pyproject.project) scripts version;
+              # inherit (pyproject.project) scripts version;
+              inherit (pyproject.project) version;
               root = "$PWD";
             })
           ];

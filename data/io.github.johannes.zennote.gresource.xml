@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<gresources>
+  <gresource prefix="/ui">
+    <file
+      compressed="true"
+      preprocess="xml-stripblanks"
+      alias="window.ui"
+    >blueprint/window.ui</file>
+    <file
+      compressed="true"
+      preprocess="xml-stripblanks"
+      alias="tabview.ui"
+    >blueprint/tabview.ui</file>
+    <file
+      compressed="true"
+      preprocess="xml-stripblanks"
+      alias="toolbar.ui"
+    >blueprint/toolbar.ui</file>
+    <file
+      compressed="true"
+      preprocess="xml-stripblanks"
+      alias="editor.ui"
+    >blueprint/editor.ui</file>
+    <file
+      compressed="true"
+      preprocess="xml-stripblanks"
+      alias="directory_browser.ui"
+    >blueprint/directory_browser.ui</file>
+  </gresource>
+  <gresource prefix="/styles">
+    <file alias="style.css" compressed="true">styles/style.css</file>
+  </gresource>
+</gresources>
