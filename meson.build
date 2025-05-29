@@ -45,7 +45,7 @@ run_command(
   '-m', 'pip',
   'install',
   '--prefix', get_option('prefix'),
-  'wheels/highlighter.whl',
+  'wheels/highlighter-0.1.0-cp313-cp313-linux_x86_64.whl',
   check: true,
 )
 
