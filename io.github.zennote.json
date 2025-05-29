@@ -1,0 +1,47 @@
+{
+  "id": "io.github.zennote",
+  "runtime": "org.gnome.Platform",
+  "runtime-version": "48",
+  "sdk": "org.gnome.Sdk",
+  "command": "zennote",
+  "finish-args": [
+    "--share=network",
+    "--share=ipc",
+    "--device=dri",
+    "--socket=wayland",
+    "--socket=session-bus",
+    "--talk-name=org.freedesktop.DBus",
+    "--own-name=io.github.zennote"
+  ],
+  "cleanup": [
+    "/include",
+    "/lib/pkgconfig",
+    "/man",
+    "/share/doc",
+    "/share/gtk-doc",
+    "/share/man",
+    "/share/pkgconfig",
+    "*.la",
+    "*.a"
+  ],
+  "modules": [
+    {
+      "name": "blueprint-compiler",
+      "buildsystem": "meson",
+      "cleanup": ["*"],
+      "sources": [
+        {
+          "type": "git",
+          "url": "https://gitlab.gnome.org/GNOME/blueprint-compiler",
+          "branch": "main"
+        }
+      ]
+    },
+    {
+      "name": "zennote",
+      "builddir": true,
+      "buildsystem": "meson",
+      "sources": [{ "type": "git", "path": ".", "branch": "main" }]
+    }
+  ]
+}

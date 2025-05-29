@@ -14,7 +14,7 @@ from zennote.utils import Args, KwArgs
 from highlighter import HLEvent, Highlighter
 
 # At some point it will be necessary to seperate file concerns and text concerns into seperate classes but it is enough for now
-@Gtk.Template(resource_path="/ui/editor.ui")
+@Gtk.Template(resource_path="/io/github/zennote/editor.ui")
 class Editor(Gtk.TextView):
     """
     Represents a text editor widget with syntax highlighting capabilities.
@@ -22,20 +22,20 @@ class Editor(Gtk.TextView):
     and highlight text based on recognized names from a theme.
     """
     __gtype_name__ = "Editor"
-    
+
     # path to the file beeing edited
     path: pathlib.Path | None = None
-    
+
     # internal buffer (GTK class for handling multiline texts, text styling etc)
     _buffer: Gtk.TextBuffer = cast(
         Gtk.TextBuffer, Gtk.Template.Child("editor-text-buffer")
     )
     # current filename - is a gobject property so it can be bound to the Title of the tabpage and changes automatically when the filename changes (due to saving etc)
     filename: GObject.Property = GObject.Property(type=str, default="Untitled")
-    
+
     # property indicating wether the file has been saved - gobject so it can be bound to some sort of indicator in the tabbar (not done yet)
     saved: GObject.Property = GObject.Property(type=bool, default=False)
-    
+
     # list of attribute for the highlighter to be recognized, are loaded from the current theme
     _recognized_names: list[str] = []
 
@@ -61,16 +61,16 @@ class Editor(Gtk.TextView):
         # load the theme from the file
         path = pathlib.Path(__file__).parent.resolve() / "theme.json"
         theme = load_theme_from_file(path)
-        
+
         # if the theme is not loaded, return
         if not theme:
             return
-        
+
         # iterate over the theme and add the tags to the tag table
         for name, tag in theme:
             tagtable.add(tag)
             self._recognized_names.append(name)
-    
+
     @Gtk.Template.Callback()
     def _on_changed(self, *_args: Args, **_kwargs: KwArgs):
         """
@@ -169,7 +169,7 @@ class Editor(Gtk.TextView):
 
     def request_new_file_path(self, cb: Callable[[bool], None] | None = None):
         """
-        Opens a file chooser dialog to request a new file path. 
+        Opens a file chooser dialog to request a new file path.
         If a file is selected, it sets the file path and writes the current text to that file.
         Callback `cb` is called with `True` if the file was saved successfully, or `False` if no file was selected or an error occurred.
         """
@@ -214,7 +214,7 @@ class Editor(Gtk.TextView):
 
         # tag to store the current highlight type
         tag: str | None = None
-        
+
         # remove all previous and therefore invalid tags in the buffer
         bounds = self._buffer.get_bounds()
         self._buffer.remove_all_tags(*bounds)
@@ -227,22 +227,22 @@ class Editor(Gtk.TextView):
                 # Start event indicates a new highlight type
                 case HLEvent.Start():
                     (tag,) = event
-                    
-                # Source event tells to highlight a specific area 
+
+                # Source event tells to highlight a specific area
                 case HLEvent.Source():
                     # retrieve start and end iter (iters are necessary for gtk)
                     (start, end) = event
                     start_iter = self._buffer.get_iter_at_offset(start)
                     end_iter = self._buffer.get_iter_at_offset(end)
 
-                    # if a tag is set apply it to the area 
+                    # if a tag is set apply it to the area
                     if tag:
                         self._buffer.apply_tag_by_name(tag, start_iter, end_iter)
-                
+
                 # Remove the current tag as it has ended
                 case HLEvent.End():
                     tag = None
-                
+
                 # falback for god knows
                 case _:
                     pass

@@ -27,7 +27,7 @@ class DirectoryItem(GObject.Object):
         return self.path.is_dir()
 
 
-@Gtk.Template(resource_path="/ui/directory_browser.ui")
+@Gtk.Template(resource_path="/io/github/zennote/directory_browser.ui")
 class DirectoryBrowser(Gtk.ListView):
     """
     This class represents the file tree on the side of the main window

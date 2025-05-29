@@ -14,7 +14,7 @@ from typing import cast
 from zennote.utils import Args, KwArgs
 
 
-@Gtk.Template(resource_path="/ui/tabview.ui")
+@Gtk.Template(resource_path="/io/github/zennote/tabview.ui")
 # kann nicht von Adw.ToolbarView verbt werden maaaan
 class EditorTabView(Adw.Bin):
     __gtype_name__: str = "EditorTabView"

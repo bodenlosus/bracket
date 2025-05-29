@@ -21,7 +21,7 @@ if not py_installation.language_version().version_compare('>= 3.9')
   error('Python 3.9 or newer is required.')
 endif
 
-PROJECT_RDNN_NAME = 'io.github.johannes.zennote'
+PROJECT_RDNN_NAME = 'io.github.zennote'
 APPLICATION_ID = PROJECT_RDNN_NAME
 PKGDATA_DIR = join_paths(get_option('prefix'), get_option('datadir'), APPLICATION_ID)
 PKGLIB_DIR = join_paths(get_option('prefix'), get_option('libdir'), APPLICATION_ID)

@@ -19,8 +19,8 @@ gi.require_version("Adw", "1")
 # pyright: reportMissingModuleSource=false
 from gi.repository import Gtk, GLib, Adw, Gio, Gdk
 
-# most of it is declared in seperate .blp files /ui/*.blp
-@Gtk.Template(resource_path="/ui/toolbar.ui")
+# most of it is declared in seperate .blp files /io/github/zennote/*.blp
+@Gtk.Template(resource_path="/io/github/zennote/toolbar.ui")
 class EditorToolBar(Gtk.PopoverMenuBar):
     """
     Class representing the toolbar
@@ -33,7 +33,7 @@ class EditorToolBar(Gtk.PopoverMenuBar):
 
 # TODO: needs to be restructured into smaller sublasses at some point, currently not done since doing so would overcomplicate the code but is due in near future
 # loaded via a template in blueprint-file (.blp)
-@Gtk.Template(resource_path="/ui/window.ui")
+@Gtk.Template(resource_path="/io/github/zennote/window.ui")
 class Window(Adw.ApplicationWindow):
     """
     The main Window of the app
@@ -138,7 +138,7 @@ class App(Adw.Application):
     files: list[pathlib.Path] = []
     active_window: Gtk.Window | None = None
 
-    def __init__(self, app_id: str | None = "io.github.johannes.zennote"):
+    def __init__(self, app_id: str | None = "io.github.zennote"):
         super().__init__(
             application_id=app_id,
             flags=Gio.ApplicationFlags.HANDLES_OPEN,
