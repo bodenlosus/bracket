@@ -8,7 +8,7 @@
       let
         pkgs = import nixpkgs { system = "x86_64-linux"; };
         pyproject = builtins.fromTOML (builtins.readFile ./pyproject.toml);
-        python-bin = pkgs.python313;
+        python-bin = pkgs.python312;
         highlighter = python-bin.pkgs.callPackage ./highlighter/package.nix {};
         nativePkgs = [highlighter] ++ (with pkgs; [ gobject-introspection ]);
         nativePythonPkgs = with python-bin.pkgs; [ setuptools ];
