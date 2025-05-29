@@ -40,19 +40,13 @@ subdir('data')
 moduledir = PKGDATA_DIR / 'zennote'
 install_subdir('zennote', install_dir: moduledir)
 
-highlighter_wheel_install = custom_target(
-  'install-highlighter-wheel',
-  input: files('wheels/highlighter.whl'),
-  output: 'highlighter-wheel-installed',
-  command: [
-    py_installation,
-    '-m', 'pip',
-    'install',
-    '--prefix', get_option('prefix'),
-    '@INPUT@',
-  ],
-  install: true,
-  build_by_default: true,
+run_command(
+  py_installation,
+  '-m', 'pip',
+  'install',
+  '--prefix', get_option('prefix'),
+  'wheels/highlighter.whl',
+  check: true,
 )
 
 # Install the executable file
