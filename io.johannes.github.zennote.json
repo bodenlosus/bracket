@@ -11,7 +11,7 @@
     "--device=dri",
     "--socket=wayland",
     "--socket=session-bus",
-    "--talk-name?org.freedesktop.DBus",
+    "--talk-name=org.freedesktop.DBus",
     "--own-name=io.johannes.github.zennote"
   ],
   "cleanup": [
