@@ -153,8 +153,14 @@ class App(Adw.Application):
         css_provider.load_from_resource("/styles/style.css")
 
         display = Gdk.Display.get_default()
+
         if not display:
-            raise RuntimeError("No default display found")
+            # Fallback to primary display if default not available
+            display = Gdk.Display.open("wayland-0") or Gdk.Display.open("x11-0")
+
+        if not display:
+            print("Warning: Could not connect to display - running headless")
+            return  # Skip CSS loading if no display
 
         Gtk.StyleContext.add_provider_for_display(
             display,
