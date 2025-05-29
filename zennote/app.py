@@ -15,7 +15,6 @@ gi.require_version("Gtk", "4.0")
 from typing import cast
 
 gi.require_version("Adw", "1")
-gi.require_version("Panel", "1")
 
 # pyright: reportMissingModuleSource=false
 from gi.repository import Gtk, GLib, Adw, Gio, Gdk

@@ -4,7 +4,6 @@ import gi
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-gi.require_version("Panel", "1")
 
 from gi.repository import Gtk, GLib, Adw, Gio, GObject
 
@@ -34,7 +33,7 @@ class DirectoryBrowser(Gtk.ListView):
     This class represents the file tree on the side of the main window
     """
     __gtype_name__: str = "DirectoryBrowser"
-    
+
     # Gtk Selection Model for the ListView, indicates that one item can be selected at a time
     # The concept of ListViews in GTK takes time to wrap your head around
     selection_model = cast(Gtk.SingleSelection, Gtk.Template.Child("selection-model"))
@@ -58,7 +57,7 @@ class DirectoryBrowser(Gtk.ListView):
 
     def _setup_tree_model(self):
         """Setup the TreeListModel with root directory"""
-        
+
         # create a new list store for the root item
         root_store = Gio.ListStore.new(DirectoryItem)
         # Create the root item for the model, representing the root directory
@@ -78,7 +77,7 @@ class DirectoryBrowser(Gtk.ListView):
         # retrieve root row from the model
         root_row = self.tree_model.get_child_row(0)
 
-        # Expand root row (just for visual clarity) 
+        # Expand root row (just for visual clarity)
         if root_row:
             root_row.set_expanded(True)
 
@@ -132,8 +131,8 @@ class DirectoryBrowser(Gtk.ListView):
         # Create TreeExpander (handles indentation and expand/collapse)
         expander = Gtk.TreeExpander(hide_expander=True)
 
-      
-        
+
+
         # Create widgets for icon and name
         icon = Gtk.Image()
         name_label = Gtk.Label()
@@ -166,7 +165,7 @@ class DirectoryBrowser(Gtk.ListView):
 
         # Get the DirectoryItem from the TreeListRow
         directory_item = cast(DirectoryItem, tree_list_row.get_item())
-        
+
         # If the item is a directory, toggle its expansion
         if directory_item.is_dir:
             expanded = tree_list_row.get_expanded()

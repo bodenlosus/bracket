@@ -3,7 +3,6 @@ import gi
 from zennote.utils import Args, KwArgs
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-gi.require_version("Panel", "1")
 
 from typing import Callable, Literal, cast
 
@@ -76,7 +75,7 @@ def request_save_file(callback: Callable[[None | Gio.File], None]) -> None:
         on_save,
     )
 
-# You could generalize this function to request any file operation, but since its a very simple function it adds unnecessary complexity. 
+# You could generalize this function to request any file operation, but since its a very simple function it adds unnecessary complexity.
 def request_open_file(callback: Callable[[None | Gio.File], None]) -> None:
     """
     Requests a file path to open from the user and calls the callback with the file path.
@@ -94,7 +93,7 @@ def request_open_file(callback: Callable[[None | Gio.File], None]) -> None:
             # TODO: again: proper error handling
             print("Couldnt open file, maybe it hasnt been provided???")
             callback(None)
-    
+
     # open the dialog
     d = Gtk.FileDialog()
     d.open(

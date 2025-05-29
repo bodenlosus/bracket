@@ -3,7 +3,7 @@
   "runtime": "org.gnome.Platform",
   "runtime-version": "48",
   "sdk": "org.gnome.Sdk",
-  "command": "znte",
+  "command": "zennote",
   "finish-args": [
     "--share=network",
     "--share=ipc",
