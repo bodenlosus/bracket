@@ -20,8 +20,8 @@ service_conf = configuration_data()
 service_conf.set('bindir', get_option('prefix') / get_option('bindir'))
 service_conf.set('app_id', APPLICATION_ID)
 configure_file(
-  input: 'org.gnome.Example.service.in',
-  output: 'org.gnome.Example.service',
+  input: APPLICATION_ID + '.service.in',
+  output: APPLICATION_ID + '.service',
   configuration: service_conf,
   install_dir: get_option('datadir') / 'dbus-1' / 'services',
 )
