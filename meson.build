@@ -37,8 +37,7 @@ dependency('py3cairo', version: '>= 1.14.0')
 
 subdir('data')
 
-moduledir = PKGDATA_DIR / 'zennote'
-install_subdir('zennote', install_dir: moduledir)
+install_subdir('zennote', install_dir: PKGDATA_DIR)
 
 run_command(
   py_installation,
