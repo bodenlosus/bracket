@@ -9,7 +9,10 @@
     "--share=ipc",
     "--socket=fallback-x11",
     "--device=dri",
-    "--socket=wayland"
+    "--socket=wayland",
+    "--socket=session-bus",
+    "--talk-name?org.freedesktop.DBus",
+    "--own-name=io.johannes.github.zennote"
   ],
   "cleanup": [
     "/include",

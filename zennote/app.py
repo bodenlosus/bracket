@@ -179,7 +179,14 @@ class App(Adw.Application):
             self.directories.append(pathlib.Path.cwd())
 
         for dir in self.directories:
-            window = Window(self)
+            window = self.props.active_window
+            if not window:
+                window = Window(self)
+
+            if not isinstance(window, Window):
+                print("Window not an instance of class zennote.Window")
+                return
+
             window.setup_actions()
 
             for file in self.files:
