@@ -62,7 +62,8 @@ bin_config.set('python', py_installation.full_path())
 
 configure_file(
   input: 'zennote.py.in',
-  output: 'znte',
+  output: 'zennote',
+  install_mode: 'rwxr-xr-x', # Sets 755 permissions
   configuration: bin_config,
   install_dir: get_option('bindir'),
 )
