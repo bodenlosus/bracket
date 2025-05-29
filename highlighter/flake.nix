@@ -17,7 +17,7 @@
           inherit system;
           overlays = [ rust-overlay.overlays.default ];
         };
-        python = pkgs.python313;
+        python = pkgs.python312;
         package = python.pkgs.callPackage ./package.nix {};
         rustToolchain = pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
       in
