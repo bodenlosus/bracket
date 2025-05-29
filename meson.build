@@ -60,8 +60,6 @@ bin_config.set('python', py_installation.full_path())
 # bin_config.set('schemasdir', PKGDATA_DIR)
 # bin_config.set('version', meson.project_version() + VCS_TAG)
 
-configure_file(input: 'manifest.in', output: PROJECT_RDNN_NAME + '.json')
-
 configure_file(
   input: 'zennote.py.in',
   output: 'znte',
