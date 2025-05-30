@@ -15,7 +15,7 @@ Following is required to run the project:
 ### Flatpak (recommended)
 Install it via the `bracket.flatpak` file found in the releases.
 
-### Manual
+### Manual (not tested)
 #### Requirements
 requires:
 - meson
@@ -23,25 +23,29 @@ requires:
 - pygobject3
 - pycairo
 
-``sh
+Build the app using meson:
+
+```sh
 
 git clone --depth 1 https://github.com/bodenlosus/bracket.git
 cd bracket
 meson setup builddir --prefix=$HOME/.local
 meson install -C builddir
 
-``
+```
 
-``sh
+Then run the app with
+
+```sh
 
 bracket <DIRECTORY>
 
-``
+```
 
 or
 
-``sh
+```sh
 
 ~/.local/bin/bracket <DIRECTORY>
 
-``
+```
