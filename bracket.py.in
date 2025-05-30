@@ -6,6 +6,7 @@ PKGDATA_DIR = '@pkgdatadir@' # Directory with resources like ui definitions, sty
 APPLICATION_ID = '@application_id@'
 RDNN_NAME = '@rdnn_name@' # Reverse-Domain-Name
 
+# adds the path to seperate app internal modules like highlighter to path
 sys.path.insert(1, PKGDATA_DIR)
 
 import gi
