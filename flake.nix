@@ -15,7 +15,7 @@
 
         propagatedPkgs = with pkgs; [ gtk4 libadwaita libpanel pkg-config ];
 
-        devPkgs = with pkgs; [
+        devPkgs = (with pkgs; [
           flatpak-builder
           libxml2
           blueprint-compiler
@@ -25,7 +25,7 @@
           basedpyright
           openssl
           mypy
-        ];
+        ]) ++ (with python-bin.pkgs; [ virtualenv ]);
         propagatedPythonPkgs = with python-bin.pkgs; [
           pygobject3
           pygobject-stubs
