@@ -11,6 +11,7 @@
     "--socket=wayland",
     "--socket=session-bus",
     "--talk-name=org.freedesktop.DBus",
+    "--filesystem=host",
     "--own-name=io.github.zennote"
   ],
   "cleanup": [
