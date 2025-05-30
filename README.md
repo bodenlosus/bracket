@@ -8,7 +8,7 @@ It currently features
 - a file-tree
 
 ## Installation
-Following is required to run the project:
+The following is required to run the project:
 - a linux desktop environment supporting GTK4 (GNOME has been tested)
 - a machine on x86_64
 
