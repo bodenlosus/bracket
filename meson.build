@@ -1,5 +1,5 @@
 project(
-  'zennote',
+  'bracket',
   version: '0.1.0',
   meson_version: '>= 1.0.0',
   default_options: [
@@ -21,7 +21,7 @@ if not py_installation.language_version().version_compare('>= 3.9')
   error('Python 3.9 or newer is required.')
 endif
 
-PROJECT_RDNN_NAME = 'io.github.zennote'
+PROJECT_RDNN_NAME = 'io.github.bracket'
 APPLICATION_ID = PROJECT_RDNN_NAME
 PKGDATA_DIR = join_paths(get_option('prefix'), get_option('datadir'), APPLICATION_ID)
 PKGLIB_DIR = join_paths(get_option('prefix'), get_option('libdir'), APPLICATION_ID)
@@ -37,7 +37,7 @@ dependency('py3cairo', version: '>= 1.14.0')
 
 subdir('data')
 
-install_subdir('zennote', install_dir: PKGDATA_DIR)
+install_subdir('bracket', install_dir: PKGDATA_DIR)
 
 run_command(
   py_installation,
@@ -60,8 +60,8 @@ bin_config.set('python', py_installation.full_path())
 # bin_config.set('version', meson.project_version() + VCS_TAG)
 
 configure_file(
-  input: 'zennote.py.in',
-  output: 'zennote',
+  input: 'bracket.py.in',
+  output: 'bracket',
   install_mode: 'rwxr-xr-x', # Sets 755 permissions
   configuration: bin_config,
   install_dir: get_option('bindir'),

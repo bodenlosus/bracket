@@ -5,16 +5,16 @@ from gi.repository import (
     Pango,
 )  # pyright: ignore[reportMissingModuleSource]
 
-from zennote.dialogs import request_save_file
+from bracket.dialogs import request_save_file
 import pathlib
 from typing import Any, Callable, cast, final
 
-from zennote.themes import load_theme_from_file
-from zennote.utils import Args, KwArgs
+from bracket.themes import load_theme_from_file
+from bracket.utils import Args, KwArgs
 from highlighter import HLEvent, Highlighter
 
 # At some point it will be necessary to seperate file concerns and text concerns into seperate classes but it is enough for now
-@Gtk.Template(resource_path="/io/github/zennote/editor.ui")
+@Gtk.Template(resource_path="/io/github/bracket/editor.ui")
 class Editor(Gtk.TextView):
     """
     Represents a text editor widget with syntax highlighting capabilities.

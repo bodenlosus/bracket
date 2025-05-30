@@ -5,10 +5,10 @@ from typing import override
 
 import gi
 from typing import Callable
-from zennote.tabview import EditorTabView
-from zennote.actions import load_accels_json
-from zennote.utils import Args, KwArgs
-from zennote.directory_browser import DirectoryBrowser
+from bracket.tabview import EditorTabView
+from bracket.actions import load_accels_json
+from bracket.utils import Args, KwArgs
+from bracket.directory_browser import DirectoryBrowser
 
 # Boilerplate for GTK - the Widget-Toolkit
 gi.require_version("Gtk", "4.0")
@@ -19,8 +19,8 @@ gi.require_version("Adw", "1")
 # pyright: reportMissingModuleSource=false
 from gi.repository import Gtk, GLib, Adw, Gio, Gdk
 
-# most of it is declared in seperate .blp files /io/github/zennote/*.blp
-@Gtk.Template(resource_path="/io/github/zennote/toolbar.ui")
+# most of it is declared in seperate .blp files /io/github/bracket/*.blp
+@Gtk.Template(resource_path="/io/github/bracket/toolbar.ui")
 class EditorToolBar(Gtk.PopoverMenuBar):
     """
     Class representing the toolbar
@@ -33,7 +33,7 @@ class EditorToolBar(Gtk.PopoverMenuBar):
 
 # TODO: needs to be restructured into smaller sublasses at some point, currently not done since doing so would overcomplicate the code but is due in near future
 # loaded via a template in blueprint-file (.blp)
-@Gtk.Template(resource_path="/io/github/zennote/window.ui")
+@Gtk.Template(resource_path="/io/github/bracket/window.ui")
 class Window(Adw.ApplicationWindow):
     """
     The main Window of the app
@@ -138,7 +138,7 @@ class App(Adw.Application):
     files: list[pathlib.Path] = []
     active_window: Gtk.Window | None = None
 
-    def __init__(self, app_id: str | None = "io.github.zennote"):
+    def __init__(self, app_id: str | None = "io.github.bracket"):
         super().__init__(
             application_id=app_id,
             flags=Gio.ApplicationFlags.HANDLES_OPEN,
@@ -173,7 +173,7 @@ class App(Adw.Application):
     def do_activate(self):
 
         self.load_accels()
-        GLib.set_application_name("zennote")
+        GLib.set_application_name("bracket")
 
         if not self.directories:
             self.directories.append(pathlib.Path.cwd())

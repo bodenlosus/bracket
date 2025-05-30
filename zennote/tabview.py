@@ -5,16 +5,16 @@ from gi.repository import (
     Gio,
     Gtk,
 )  # pyright: ignore[reportMissingModuleSource]
-from zennote.dialogs import UnsavedResponse, request_open_file, unsaved_dialog
-from zennote.editor import Editor
+from bracket.dialogs import UnsavedResponse, request_open_file, unsaved_dialog
+from bracket.editor import Editor
 
 import pathlib
 from typing import cast
 
-from zennote.utils import Args, KwArgs
+from bracket.utils import Args, KwArgs
 
 
-@Gtk.Template(resource_path="/io/github/zennote/tabview.ui")
+@Gtk.Template(resource_path="/io/github/bracket/tabview.ui")
 # kann nicht von Adw.ToolbarView verbt werden maaaan
 class EditorTabView(Adw.Bin):
     __gtype_name__: str = "EditorTabView"

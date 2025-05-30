@@ -16,7 +16,7 @@ gi.require_version("Adw", "1")
 from gi.repository import Gio # pyright-i
 
 def load_resources():
-    """Load resources for the ZenNote application."""
+    """Load resources for the bracket application."""
 
     # not cleanest solution, but works for now
     # TODO: use a build system to copy the resources to the right place
@@ -33,16 +33,16 @@ def load_resources():
     resource._register() # type: ignore
 
 def app():
-    """Main entry point for the ZenNote application."""
+    """Main entry point for the bracket application."""
     load_resources()
 
     # has to be loaded after the resources are loaded
     # because the resources are used in the UI
-    from zennote.app import App
+    from bracket.app import App
 
     # run the application
-    zennote = App(app_id=APPLICATION_ID)
-    exit_status = zennote.run(sys.argv)
+    bracket = App(app_id=APPLICATION_ID)
+    exit_status = bracket.run(sys.argv)
     # Exit the application with the status code returned by the run method
     sys.exit(exit_status)
 

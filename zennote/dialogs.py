@@ -1,6 +1,6 @@
 import gi
 
-from zennote.utils import Args, KwArgs
+from bracket.utils import Args, KwArgs
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 

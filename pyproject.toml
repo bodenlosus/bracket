@@ -3,11 +3,11 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "zennote"
+name = "bracket"
 version = "0.1"
 dependencies = ["pygobject3", "pycairo", "pygobject-stubs"]
 
 [tool.setuptools]
-packages = ["zennote"]
+packages = ["bracket"]
 # [project.scripts]
-# zennote = "zennote.zennote:app"
+# bracket = "bracket.bracket:app"
