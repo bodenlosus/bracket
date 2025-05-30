@@ -39,12 +39,15 @@ class Editor(Gtk.TextView):
     # list of attribute for the highlighter to be recognized, are loaded from the current theme
     _recognized_names: list[str] = []
 
-    # new files are not saved by default
+    # new files are saved by default
     def __init__(self, saved: bool = False, *_args: Any, **_kwargs: Any):
         super().__init__(*_args, **_kwargs)
         self.set_saved(saved)
+        # load tags to highlight and colors from theme
         self._load_tags()
-        self.highlighter = Highlighter(self._recognized_names)
+        # create a new highlight and set the language
+        self.highlighter: Highlighter = Highlighter(self._recognized_names)
+        # TODO: make this function recieve an argument with the language name or maybe the file ending so languages other than python can be su
         self.highlighter.set_language()
 
     def _load_tags(self):

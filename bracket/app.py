@@ -134,9 +134,9 @@ class Window(Adw.ApplicationWindow):
 
 class App(Adw.Application):
 
-    directories: list[pathlib.Path] = []
-    files: list[pathlib.Path] = []
-    active_window: Gtk.Window | None = None
+    __directories: list[pathlib.Path] = []
+    __files: list[pathlib.Path] = []
+    _active_window: Gtk.Window | None = None
 
     def __init__(self, app_id: str | None = "io.github.bracket"):
         super().__init__(
@@ -172,18 +172,18 @@ class App(Adw.Application):
     @override
     def do_activate(self):
 
-        self.load_accels()
+        self._load_accels()
         GLib.set_application_name("bracket")
 
-        if not self.directories:
-            self.directories.append(pathlib.Path.cwd())
+        if not self.__directories:
+            self.__directories.append(pathlib.Path.cwd())
 
-        for dir in self.directories:
+        for dir in self.__directories:
             window = Window(self)
 
             window.setup_actions()
 
-            for file in self.files:
+            for file in self.__files:
 
                 window.tabview.open_file(file)
 
@@ -192,7 +192,7 @@ class App(Adw.Application):
 
         # self.active_window = window
 
-    def load_accels(self):
+    def _load_accels(self):
         for action, accel in load_accels_json().items():
             print(action, accel)
             self.set_accels_for_action(action, (accel,))
@@ -208,9 +208,9 @@ class App(Adw.Application):
             path = pathlib.Path(path)
 
             if path.is_file():
-                self.files.append(path)
+                self.__files.append(path)
 
             elif path.is_dir():
-                self.directories.append(path)
+                self.__directories.append(path)
 
         self.activate()

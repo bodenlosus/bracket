@@ -36,13 +36,13 @@ class DirectoryBrowser(Gtk.ListView):
 
     # Gtk Selection Model for the ListView, indicates that one item can be selected at a time
     # The concept of ListViews in GTK takes time to wrap your head around
-    selection_model = cast(Gtk.SingleSelection, Gtk.Template.Child("selection-model"))
+    __selection_model = cast(Gtk.SingleSelection, Gtk.Template.Child("selection-model"))
     # store, basically a list of items to display in the ListView
-    store = Gio.ListStore.new(DirectoryItem)
+    __store = Gio.ListStore.new(DirectoryItem)
     # The TreeListModel is a model that allows for hierarchical data (like directories and files)
-    tree_model: Gtk.TreeListModel | None = None
+    __tree_model: Gtk.TreeListModel | None = None
     # The root path for the directory browser, defaults to the current working directory
-    root_path: Path | None = pathlib.Path.cwd()  # Default root path
+    _root_path: Path | None = pathlib.Path.cwd()  # Default root path
     def __init__(self):
         super().__init__()
         self._setup_tree_model()
@@ -52,7 +52,7 @@ class DirectoryBrowser(Gtk.ListView):
         Set the root path for the directory browser
         This will reset the model and load the new directory contents
         """
-        self.root_path = path
+        self._root_path = path
         self._setup_tree_model()
 
     def _setup_tree_model(self):
@@ -61,30 +61,30 @@ class DirectoryBrowser(Gtk.ListView):
         # create a new list store for the root item
         root_store = Gio.ListStore.new(DirectoryItem)
         # Create the root item for the model, representing the root directory
-        root_item = DirectoryItem(self.root_path)
+        root_item = DirectoryItem(self._root_path)
         # Append the root item to the store
         root_store.append(root_item)
 
         # Create new TreeListModel
         # will go through all files recursively and create child widgets for each directory and file
-        self.tree_model = Gtk.TreeListModel.new(
+        self.__tree_model = Gtk.TreeListModel.new(
             root_store,           # root model
             False,               # passthrough - don't pass model items directly
             False,                # autoexpand - expand items automatically
-            self.create_child_model  # function to create child models
+            self._create_child_model  # function to create child models
         )
 
         # retrieve root row from the model
-        root_row = self.tree_model.get_child_row(0)
+        root_row = self.__tree_model.get_child_row(0)
 
         # Expand root row (just for visual clarity)
         if root_row:
             root_row.set_expanded(True)
 
         # Set the TreeListModel as the model for the ListView
-        self.selection_model.set_model(self.tree_model)
+        self.__selection_model.set_model(self.__tree_model)
 
-    def create_child_model(self, item: DirectoryItem):
+    def _create_child_model(self, item: DirectoryItem):
         """
         Create child model for TreeListModel
         This function is called for each item to get its children
@@ -157,7 +157,7 @@ class DirectoryBrowser(Gtk.ListView):
         This will toggle the expansion of directories or open files
         """
         # retrieve the activated row
-        tree_list_row = cast(Gtk.TreeListRow | None, self.selection_model.get_item(position))
+        tree_list_row = cast(Gtk.TreeListRow | None, self.__selection_model.get_item(position))
 
         # if not retrieved, return
         if not tree_list_row:
