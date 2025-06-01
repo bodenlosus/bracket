@@ -1,0 +1,16 @@
+[package]
+name = "highlighter"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "highlighter"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = "0.25.0"
+tree-sitter-highlight = "0.25.4"
+tree-sitter-python = "0.23.6"
+
+[profile.release]
+opt-level = 3
