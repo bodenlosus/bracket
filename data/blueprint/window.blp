@@ -15,9 +15,9 @@ template $Window: Adw.ApplicationWindow {
         vscrollbar-policy: always;
         hscrollbar-policy: automatic;
         css-classes: ["sidebara"];
-        $DirectoryBrowser dir-browser {}
+        // $DirectoryBrowser dir-browser {}
       }
-      
+
     };
     sidebar-position: end;
     content: Adw.NavigationPage {
@@ -28,9 +28,9 @@ template $Window: Adw.ApplicationWindow {
         $EditorToolBar editor-toolbar {}
 
         reveal-top-bars: true;
-        
+
         content: $EditorTabView editor-tabview {
-             
+
         };
       }
     };

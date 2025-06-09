@@ -1,7 +1,10 @@
 using Gtk 4.0;
+using Adw 1;
 
-template $EditorToolBar: PopoverMenuBar {
-  menu-model: editor_toolbar_menu;
+template $EditorToolBar: Adw.Bin {
+  PopoverMenuBar menubar {
+    menu-model: editor_toolbar_menu;
+  }
 }
 
 menu editor_toolbar_menu {
@@ -10,7 +13,7 @@ menu editor_toolbar_menu {
     item ("New Text File", "win.new-file")
     item ("Open File", "win.open-file")
     item ("Save", "win.save-file")
-    item ("Save As ...", "win.save-file")
+    item ("Save As ...", "win.save-file-as")
     item ("Close", "win.close-file")
   }
 

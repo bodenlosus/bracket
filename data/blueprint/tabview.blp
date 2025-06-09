@@ -4,21 +4,21 @@ using Adw 1;
 template $EditorTabView: Adw.Bin {
   Adw.ToolbarView {
     [top]
-    Adw.TabBar tab-bar {
+    Adw.TabBar tabbar {
       autohide: false;
       expand-tabs: false;
       Gtk.GestureClick {
         button: 3;
-        pressed => $_on_context();
+        // pressed => $_on_context();
       }
     }
     content: Gtk.ScrolledWindow {
       hscrollbar-policy: always;
       vscrollbar-policy: automatic;
-      Adw.TabView tab-view {
+      Adw.TabView tabview {
         margin-start: 20;
         margin-end: 20;
-        close-page => $_on_close();
+        close-page => $on_close() swapped;
       }
     };   
   }

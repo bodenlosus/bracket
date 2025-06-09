@@ -5,27 +5,27 @@
       compressed="true"
       preprocess="xml-stripblanks"
       alias="window.ui"
-    >blueprint/window.ui</file>
+    >ui/window.ui</file>
     <file
       compressed="true"
       preprocess="xml-stripblanks"
       alias="tabview.ui"
-    >blueprint/tabview.ui</file>
+    >ui/tabview.ui</file>
     <file
       compressed="true"
       preprocess="xml-stripblanks"
       alias="toolbar.ui"
-    >blueprint/toolbar.ui</file>
+    >ui/toolbar.ui</file>
     <file
       compressed="true"
       preprocess="xml-stripblanks"
       alias="editor.ui"
-    >blueprint/editor.ui</file>
+    >ui/editor.ui</file>
     <file
       compressed="true"
       preprocess="xml-stripblanks"
       alias="directory_browser.ui"
-    >blueprint/directory_browser.ui</file>
+    >ui/directory_browser.ui</file>
   </gresource>
   <gresource prefix="/styles">
     <file alias="style.css" compressed="true">styles/style.css</file>
